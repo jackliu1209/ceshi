@@ -1,74 +1,226 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh">
 <head>
-    <title>隐形按钮复制功能</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>带粉色Div的反向滑动页面</title>
     <style>
-        .image-container {
-            position: relative;
-            display: inline-block;
+        body {
+            margin: 0;
+            padding: 0;
+            height: 500vh;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #f5f7fa, #c3cfe2);
+            overflow-x: hidden;
+            overflow-y: hidden;
         }
-        .invisible-button {
-            position: absolute;
-            width: 50px;  /* 按钮宽度 */
-            height: 50px;  /* 按钮高度 */
-            background: transparent;
-            border: none;
+        
+        .content {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+            transform: translateY(calc(-100% + 100vh));
+            will-change: transform;
+            transition: transform 0.1s ease-out;
+        }
+        
+        h1 {
+            margin-top: 100vh;
+            font-size: 3em;
+            color: #333;
+        }
+        
+        p {
+            font-size: 1.2em;
+            line-height: 1.6;
+            color: #555;
+            margin: 30px 0;
+        }
+        
+        .section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        /* 粉色Div样式 */
+        .pink-box {
+            width: 300px;
+            height: 200px;
+            background-color: #ffb6c1; /* 粉色 */
+            margin: 20px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
             cursor: pointer;
-            /* 使用以下属性定位按钮在图片上的位置 */
-            top: 100px;    /* 距离图片顶部的距离 */
-            left: 100px;   /* 距离图片左侧的距离 */
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
-        #feedback {
-            display: none;
-            position: absolute;
-            background: #4CAF50;
+        
+        .pink-box:hover {
+            background-color: #ff69b4; /* 更深的粉色 */
+            transform: scale(1.05);
+        }
+        
+        .pink-box:active {
+            transform: scale(0.98);
+        }
+        
+        /* 反馈提示样式 */
+        .copy-feedback {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
             color: white;
-            padding: 5px;
-            border-radius: 3px;
-            font-size: 12px;
+            padding: 10px 20px;
+            border-radius: 5px;
+            z-index: 100;
+            display: none;
         }
     </style>
 </head>
 <body>
-    <div class="image-container">
-        <!-- 替换为你的图片路径 -->
-        <img src="5888888888888.jpg" alt="示例图片">
-        <button class="invisible-button" onclick="copyText()"></button>
-        <span id="feedback">已复制!</span>
+    <div class="content">
+        <div class="section">
+            <h1>带粉色Div的反向滑动页面</h1>
+            <p>点击下面的粉色区域复制"yaliuz"</p>
+            
+            <!-- 粉色可点击Div -->
+            <div class="pink-box" id="copyBox">
+                <span style="color: white; font-weight: bold;">点击我复制</span>
+            </div>
+            
+            <p>尝试向上/向下滚动页面体验反向滑动效果</p>
+        </div>
+        
+        <div class="section">
+            <h2>流畅的反向滚动效果</h2>
+            <p>使用CSS transform和硬件加速实现更流畅的动画。</p>
+        </div>
     </div>
+    
+    <!-- 复制反馈提示 -->
+    <div class="copy-feedback" id="copyFeedback">已复制: yaliuz</div>
 
     <script>
-        function copyText() {
-            const textToCopy = "yaliuz";
+        document.addEventListener('DOMContentLoaded', function() {
+            const content = document.querySelector('.content');
+            const copyBox = document.getElementById('copyBox');
+            const copyFeedback = document.getElementById('copyFeedback');
+            let targetY = 0;
+            let currentY = -getMaxScroll();
+            let scrolling = false;
+            let rafId = null;
             
-            // 创建临时textarea元素
-            const textarea = document.createElement("textarea");
-            textarea.value = textToCopy;
-            textarea.style.position = "fixed";  // 防止页面滚动
-            document.body.appendChild(textarea);
-            textarea.select();
+            // 禁用触摸设备的默认行为
+            document.addEventListener('touchmove', function(e) {
+                e.preventDefault();
+            }, { passive: false });
             
-            try {
-                // 执行复制命令
-                document.execCommand("copy");
-                
-                // 显示反馈
-                const feedback = document.getElementById("feedback");
-                feedback.style.display = "inline";
-                feedback.style.left = (event.clientX + 10) + "px";
-                feedback.style.top = (event.clientY + 10) + "px";
-                
-                // 2秒后隐藏反馈
-                setTimeout(() => {
-                    feedback.style.display = "none";
-                }, 2000);
-            } catch (err) {
-                console.error("复制失败:", err);
+            // 获取最大可滚动距离
+            function getMaxScroll() {
+                return document.body.scrollHeight - window.innerHeight;
             }
             
-            // 移除临时元素
-            document.body.removeChild(textarea);
-        }
+            // 设置初始位置在底部
+            function initPosition() {
+                const maxScroll = getMaxScroll();
+                targetY = -maxScroll;
+                currentY = -maxScroll;
+                updatePosition();
+            }
+            
+            // 更新元素位置
+            function updatePosition() {
+                content.style.transform = `translateY(${currentY}px)`;
+            }
+            
+            // 动画循环
+            function animate() {
+                currentY += (targetY - currentY) * 0.2;
+                
+                if (Math.abs(targetY - currentY) < 0.5) {
+                    currentY = targetY;
+                    scrolling = false;
+                    cancelAnimationFrame(rafId);
+                    rafId = null;
+                }
+                
+                updatePosition();
+                
+                if (scrolling) {
+                    rafId = requestAnimationFrame(animate);
+                }
+            }
+            
+            // 处理滚动事件
+            function handleScroll(e) {
+                if (!scrolling) {
+                    scrolling = true;
+                    if (!rafId) {
+                        rafId = requestAnimationFrame(animate);
+                    }
+                }
+                
+                if (e.deltaY > 0) {
+                    targetY += 20;
+                } else {
+                    targetY -= 20;
+                }
+                
+                const maxScroll = getMaxScroll();
+                targetY = Math.min(0, Math.max(-maxScroll, targetY));
+            }
+            
+            // 复制文本函数
+            function copyToClipboard(text) {
+                navigator.clipboard.writeText(text).then(function() {
+                    // 显示反馈
+                    copyFeedback.style.display = 'block';
+                    setTimeout(function() {
+                        copyFeedback.style.display = 'none';
+                    }, 2000);
+                }).catch(function(err) {
+                    console.error('复制失败: ', err);
+                    // 备用复制方法
+                    const textarea = document.createElement('textarea');
+                    textarea.value = text;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                    
+                    copyFeedback.style.display = 'block';
+                    copyFeedback.textContent = "已复制(备用方法): yaliuz";
+                    setTimeout(function() {
+                        copyFeedback.style.display = 'none';
+                    }, 2000);
+                });
+            }
+            
+            // 初始化
+            initPosition();
+            
+            // 监听鼠标滚轮事件
+            window.addEventListener('wheel', handleScroll, { passive: false });
+            
+            // 响应窗口大小变化
+            window.addEventListener('resize', function() {
+                const maxScroll = getMaxScroll();
+                targetY = Math.min(0, Math.max(-maxScroll, targetY));
+            });
+            
+            // 绑定粉色div点击事件
+            copyBox.addEventListener('click', function() {
+                copyToClipboard('yaliuz');
+            });
+        });
     </script>
 </body>
 </html>
