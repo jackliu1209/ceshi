@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>隐形按钮复制功能</title>
+    <style>
+        .image-container {
+            position: relative;
+            display: inline-block;
+        }
+        .invisible-button {
+            position: absolute;
+            width: 50px;  /* 按钮宽度 */
+            height: 50px;  /* 按钮高度 */
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            /* 使用以下属性定位按钮在图片上的位置 */
+            top: 100px;    /* 距离图片顶部的距离 */
+            left: 100px;   /* 距离图片左侧的距离 */
+        }
+        #feedback {
+            display: none;
+            position: absolute;
+            background: #4CAF50;
+            color: white;
+            padding: 5px;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="image-container">
+        <!-- 替换为你的图片路径 -->
+        <img src="5888888888888.jpg" alt="示例图片">
+        <button class="invisible-button" onclick="copyText()"></button>
+        <span id="feedback">已复制!</span>
+    </div>
+
+    <script>
+        function copyText() {
+            const textToCopy = "yaliuz";
+            
+            // 创建临时textarea元素
+            const textarea = document.createElement("textarea");
+            textarea.value = textToCopy;
+            textarea.style.position = "fixed";  // 防止页面滚动
+            document.body.appendChild(textarea);
+            textarea.select();
+            
+            try {
+                // 执行复制命令
+                document.execCommand("copy");
+                
+                // 显示反馈
+                const feedback = document.getElementById("feedback");
+                feedback.style.display = "inline";
+                feedback.style.left = (event.clientX + 10) + "px";
+                feedback.style.top = (event.clientY + 10) + "px";
+                
+                // 2秒后隐藏反馈
+                setTimeout(() => {
+                    feedback.style.display = "none";
+                }, 2000);
+            } catch (err) {
+                console.error("复制失败:", err);
+            }
+            
+            // 移除临时元素
+            document.body.removeChild(textarea);
+        }
+    </script>
+</body>
+</html>
