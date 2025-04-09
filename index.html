@@ -5,19 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>流畅的反向滑动页面</title>
     <style>
-        body {
+        body, html {
             margin: 0;
             padding: 0;
-            height: 500vh; /* 使页面非常长以便滚动 */
-            font-family: Arial, sans-serif;
-            background: linear-gradient(to bottom, #f5f7fa, #c3cfe2);
-            overflow-x: hidden;
-            /* 禁用原生滚动 */
-            overflow-y: hidden;
-            -webkit-overflow-scrolling: touch; /* 启用iOS平滑滚动 */
-            touch-action: none; /* 禁用默认触摸行为 */
+            height: 100%;
+            overflow: hidden; /* 隐藏原生滚动条 */
         }
-        
+
+        /* 视频背景 */
+        .video-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+
         .content {
             padding: 20px;
             max-width: 800px;
@@ -26,47 +31,53 @@
             /* 初始位置在底部 */
             transform: translateY(calc(-100% + 100vh));
             will-change: transform; /* 提示浏览器优化动画 */
+            color: white; /* 白色文字以便在视频上清晰显示 */
         }
-        
+
+        h1, h2, p {
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5); /* 增加文字阴影，增强可读性 */
+        }
+
         h1 {
-            margin-top: 100vh;
-            font-size: clamp(2em, 5vw, 3em); /* 响应式字体大小 */
-            color: #333;
+            font-size: clamp(2em, 5vw, 3em);
+            margin: 0; /* 去除默认的 margin-top */
         }
-        
+
         h2 {
             font-size: clamp(1.5em, 4vw, 2.5em);
-            color: #333;
         }
-        
+
         p {
             font-size: clamp(1em, 3vw, 1.2em);
             line-height: 1.6;
-            color: #555;
-            margin: 30px 0;
+            margin: 15px 0; /* 调整段落间距 */
         }
-        
+
+        /* 新增类，用于设置与 h1 相同的字体大小 */
+       .same-as-h1 {
+            font-size: clamp(2em, 5vw, 3em);
+        }
+
         .section {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            justify-content: center; /* 垂直居中 */
+            align-items: center; /* 水平居中 */
             padding: 20px;
             box-sizing: border-box;
         }
-        
+
         /* 平滑过渡效果 */
         .content {
             transition: transform 0.1s ease-out;
         }
-        
-        /* 手机端优化 */
+
         @media (max-width: 768px) {
             .content {
                 padding: 10px;
             }
-            
+
             .section {
                 padding: 10px;
             }
@@ -74,33 +85,20 @@
     </style>
 </head>
 <body>
+    <!-- 视频背景 -->
+    <video class="video-bg" autoplay loop muted playsinline>
+        <source src="https://www.kingsoft.com/media/movie-10.438803e7.mp4" type="video/mp4">
+        您的浏览器不支持视频播放。
+    </video>
+
     <div class="content">
         <div class="section">
-            <h1>流畅的反向滑动页面</h1>
-            <p>这个页面现在有了更流畅的滚动效果。</p>
-            <p>尝试向上滚动鼠标或滑动屏幕 - 页面会向相反方向移动！</p>
+            <p>祝你天天开心</p>
+            <p class="same-as-h1">记得双击摸摸哒</p>
         </div>
-        
         <div class="section">
-            <h2>优化后的滚动效果</h2>
-            <p>使用CSS transform和硬件加速实现更流畅的动画。</p>
-            <p>继续滚动体验这个优化后的效果。</p>
-        </div>
-        
-        <div class="section">
-            <h2>页面底部区域</h2>
-            <p>您已经到达了页面的初始位置。</p>
-            <p>现在向上滚动会看到页面向下移动的反向效果。</p>
-        </div>
-        
-        <div class="section">
-            <h2>技术优化</h2>
-            <p>使用requestAnimationFrame和CSS transform替代直接操作scrollTop。</p>
-        </div>
-        
-        <div class="section">
-            <h2>结束</h2>
-            <p>感谢体验这个优化后的反向滑动页面！</p>
+            <h1>Hi，欢迎你的到访</h1>
+            <p>by yaliuz</p>
         </div>
     </div>
 
@@ -114,51 +112,39 @@
             let startY = 0;
             let isTouchDevice = 'ontouchstart' in window;
             let scrollSpeed = isTouchDevice ? 2 : 1; // 触摸设备滚动速度较慢
-            
-            // 禁用触摸设备的默认行为
-            document.addEventListener('touchmove', function(e) {
-                e.preventDefault();
-            }, { passive: false });
-            
-            // 获取最大可滚动距离
+
             function getMaxScroll() {
                 return document.body.scrollHeight - window.innerHeight;
             }
-            
-            // 设置初始位置在底部
+
             function initPosition() {
                 const maxScroll = getMaxScroll();
                 targetY = -maxScroll;
                 currentY = -maxScroll;
                 updatePosition();
             }
-            
-            // 更新元素位置
+
             function updatePosition() {
                 content.style.transform = `translateY(${currentY}px)`;
             }
-            
-            // 动画循环
+
             function animate() {
-                // 添加缓动效果
                 currentY += (targetY - currentY) * 0.15;
-                
-                // 如果接近目标位置则停止动画
+
                 if (Math.abs(targetY - currentY) < 0.5) {
                     currentY = targetY;
                     scrolling = false;
                     cancelAnimationFrame(rafId);
                     rafId = null;
                 }
-                
+
                 updatePosition();
-                
+
                 if (scrolling) {
                     rafId = requestAnimationFrame(animate);
                 }
             }
-            
-            // 处理滚动事件
+
             function handleScroll(e) {
                 if (!scrolling) {
                     scrolling = true;
@@ -166,29 +152,26 @@
                         rafId = requestAnimationFrame(animate);
                     }
                 }
-                
-                // 反转滚动方向
+
                 let delta = 0;
-                if (e.deltaY) { // 鼠标滚轮
+                if (e.deltaY) {
                     delta = e.deltaY * scrollSpeed;
                 }
-                
+
                 if (delta > 0) {
-                    targetY += 20; // 向下滚动时，内容向上移动
+                    targetY += 20;
                 } else if (delta < 0) {
-                    targetY -= 20; // 向上滚动时，内容向下移动
+                    targetY -= 20;
                 }
-                
-                // 限制边界
+
                 const maxScroll = getMaxScroll();
                 targetY = Math.min(0, Math.max(-maxScroll, targetY));
             }
-            
-            // 触摸事件处理
+
             function handleTouchStart(e) {
                 startY = e.touches[0].clientY;
             }
-            
+
             function handleTouchMove(e) {
                 if (!scrolling) {
                     scrolling = true;
@@ -196,32 +179,25 @@
                         rafId = requestAnimationFrame(animate);
                     }
                 }
-                
+
                 const y = e.touches[0].clientY;
-                const delta = startY - y; // 反转方向
+                const delta = startY - y;
                 startY = y;
-                
-                // 根据触摸移动距离调整内容位置
+
                 targetY += delta * scrollSpeed;
-                
-                // 限制边界
+
                 const maxScroll = getMaxScroll();
                 targetY = Math.min(0, Math.max(-maxScroll, targetY));
-                
+
                 e.preventDefault();
             }
-            
-            // 初始化
+
             initPosition();
-            
-            // 监听鼠标滚轮事件
+
             window.addEventListener('wheel', handleScroll, { passive: false });
-            
-            // 监听触摸事件
             window.addEventListener('touchstart', handleTouchStart, { passive: false });
             window.addEventListener('touchmove', handleTouchMove, { passive: false });
-            
-            // 响应窗口大小变化
+
             window.addEventListener('resize', function() {
                 const maxScroll = getMaxScroll();
                 targetY = Math.min(0, Math.max(-maxScroll, targetY));
@@ -230,3 +206,4 @@
     </script>
 </body>
 </html>
+    
