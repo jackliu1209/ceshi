@@ -2,206 +2,456 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>流畅的反向滑动页面</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitter风格页面</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            overflow: hidden; /* 隐藏原生滚动条 */
+        *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;transition:all .3s ease}
+        :root{--bg:#fff;--text:#0f1419;--border:#e0e0e0;--hover:#f5f5f5;--primary:#007bff;--sec-text:#536471;--shadow:0 2px 4px rgba(0,0,0,.1)}
+        body{display:flex;height:100vh;background:var(--bg);color:var(--text)}
+        .sidebar{
+            width:250px;
+            padding:20px;
+            border-right:1px solid var(--border);
+            display:flex;
+            flex-direction:column;
+            box-shadow:2px 0 5px rgba(0,0,0,.05);
+            position:sticky;
+            top:0;
+            height:100vh;
+            z-index:10;
         }
-
-        /* 视频背景 */
-        .video-bg {
-            position: fixed;
+        .logo{
+            font-size:30px;
+            margin-bottom:25px;
+            padding:10px;
+            color:var(--primary);
+            width: 40px;
+            height: 40px;
+            background-image: url('https://www.ysjf.com/assets/ysjf@2x-DcH_D2DE.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            transition: background-image 0.3s ease;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .logo:hover {
+            background-image: url('https://www.ysjf.com/assets/ysjf_active@2x-BTnDL7hV.png');
+        }
+        .nav-item{
+            display:flex;
+            align-items:center;
+            padding:12px 15px;
+            margin-bottom:8px;
+            border-radius:10px;
+            font-size:18px;
+            cursor:pointer;
+            touch-action:manipulation;
+            position:relative;
+            overflow:hidden;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            color: var(--primary);
+            font-weight: 600;
+            justify-content: flex-start;
+        }
+        .nav-item:hover{
+            color:var(--primary);
+            background-color: var(--hover);
+        }
+        .nav-item.active{
+            background:var(--hover);
+            font-weight:700;
+            border-left:3px solid var(--primary);
+            transform: scale(1.05); 
+        }
+        .nav-item i{
+            margin-right:12px;
+            color:var(--primary);
+        }
+        .nav-item::before {
+            content: '';
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            object-fit: cover;
-            z-index: -1;
+            background: var(--primary);
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            z-index: 0;
         }
-
-        .content {
-            padding: 20px;
-            max-width: 800px;
-            margin: 0 auto;
-            text-align: center;
-            /* 初始位置在底部 */
-            transform: translateY(calc(-100% + 100vh));
-            will-change: transform; /* 提示浏览器优化动画 */
-            color: white; /* 白色文字以便在视频上清晰显示 */
+        .nav-item:hover::before {
+            opacity: 0.1;
         }
-
-        h1, h2, p {
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5); /* 增加文字阴影，增强可读性 */
+        .nav-item span {position: relative; z-index: 1;}
+        .tweet-btn{
+            background-color:var(--primary);
+            color:white;
+            border:none;
+            border-radius:25px;
+            padding:12px;
+            font-size:16px;
+            font-weight:600;
+            margin-top:15px;
+            cursor:pointer;
+            width:100%;
+            box-shadow:var(--shadow);
+            touch-action:manipulation;
         }
-
-        h1 {
-            font-size: clamp(2em, 5vw, 3em);
-            margin: 0; /* 去除默认的 margin-top */
+        .tweet-btn:hover{
+            background-color:#0056b3;
         }
-
-        h2 {
-            font-size: clamp(1.5em, 4vw, 2.5em);
+        .main-content{flex:1;max-width:600px;border-right:1px solid var(--border);overflow-y:auto}
+        .header{padding:15px 20px;font-size:20px;font-weight:700;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(255,255,255,.8);backdrop-filter:blur(10px)}
+        .tweet-box{padding:15px;border-bottom:1px solid var(--border)}
+        .tweet-input{display:flex}
+        .avatar{
+            width:50px;
+            height:50px;
+            border-radius:50%;
+            background-image: url('https://thirdwx.qlogo.cn/mmopen/vi_32/FmXo0ZgeSGcMnUbiaxJxZe4IbMO8uVpho2u4QYEWN3FibxkbrfWkEXFGNGmtyhouaCYsdY2jjrBibibXlQ1iaJgxKErfHF9vl6BxcHiaYBCiageneU/132');
+            background-size: cover;
+            margin-right:15px
         }
-
-        p {
-            font-size: clamp(1em, 3vw, 1.2em);
-            line-height: 1.6;
-            margin: 15px 0; /* 调整段落间距 */
+        .tweet-textarea{flex:1;background:0 0;border:none;color:var(--text);font-size:20px;resize:none;height:100px;outline:0}
+        .tweet-actions{display:flex;justify-content:space-between;align-items:center;margin-top:15px;padding-left:65px}
+        .tweet-icons{display:flex}
+        .tweet-icon{color:var(--primary);margin-right:15px;cursor:pointer}
+        .tweet-post-btn{background:var(--primary);color:#fff;border:none;border-radius:20px;padding:8px 16px;font-weight:700;cursor:pointer}
+        .tweet{padding:15px;border-bottom:1px solid var(--border);display:flex}
+        .tweet-content{flex:1}
+        .tweet-header{display:flex;align-items:center;margin-bottom:5px}
+        .tweet-name{font-weight:700;margin-right:5px}
+        .tweet-username,.tweet-time{color:var(--sec-text);margin-right:5px}
+        .tweet-text{margin-bottom:10px;font-size:15px;line-height:1.3}
+        .tweet-actions{display:flex;justify-content:space-between;max-width:400px;color:var(--sec-text)}
+        .tweet-action{display:flex;align-items:center}
+        .tweet-action i{margin-right:5px}
+        .right-sidebar{
+            width:350px;
+            padding:20px;
+            position:relative;
         }
-
-        /* 新增类，用于设置与 h1 相同的字体大小 */
-       .same-as-h1 {
-            font-size: clamp(2em, 5vw, 3em);
+        .search-box{
+            background:#f0f0f0;
+            border-radius:20px;
+            padding:12px;
+            display:flex;
+            align-items:center;
+            margin-bottom:20px;
+            transition:all 0.3s ease;
+            position:relative;
+            z-index:2;
         }
-
-        .section {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center; /* 垂直居中 */
-            align-items: center; /* 水平居中 */
-            padding: 20px;
-            box-sizing: border-box;
+        .search-box.expanded{
+            transform:scale(1.1);
+            margin:20px auto;
+            width:80%;
+            box-shadow:0 5px 15px rgba(0,0,0,0.1);
         }
-
-        /* 平滑过渡效果 */
-        .content {
-            transition: transform 0.1s ease-out;
+        .search-input{background:0 0;border:none;color:var(--text);margin-left:10px;width:100%;outline:0}
+        .trending-box{background:#f7f7f7;border-radius:15px;margin-bottom:20px}
+        .trending-header{padding:15px;font-size:20px;font-weight:700}
+        .trending-item{padding:15px;cursor:pointer}
+        .trending-item:hover{background:#eaeaea}
+        .trending-category{color:var(--sec-text);font-size:13px}
+        .trending-name{font-weight:700;margin:5px 0}
+        .trending-tweets{color:var(--sec-text);font-size:13px}
+        
+        /* 新增的联系方式样式 */
+        .contact-box{
+            background:#f7f7f7;
+            border-radius:15px;
+            margin-bottom:20px;
+            transition:all 0.3s ease;
+            max-height:300px;
+            overflow:hidden;
+            position:relative;
+            z-index:1;
         }
-
-        @media (max-width: 768px) {
-            .content {
-                padding: 10px;
+        .contact-box.collapsed{
+            max-height:0;
+            margin:0;
+            opacity:0;
+        }
+        .contact-box.expanded{
+            transform:scale(1.05);
+            margin:20px auto;
+            width:90%;
+            box-shadow:0 5px 15px rgba(0,0,0,0.1);
+        }
+        .contact-header{padding:15px;font-size:20px;font-weight:700}
+        .contact-item{padding:15px;display:flex;align-items:center;border-bottom:1px solid var(--border)}
+        .contact-item:last-child{border-bottom:none}
+        .contact-item:hover{background:#eaeaea}
+        .contact-icon{width:40px;height:40px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;margin-right:15px;font-size:18px}
+        .contact-info{flex:1}
+        .contact-name{font-weight:700;margin-bottom:3px}
+        .contact-detail{color:var(--sec-text);font-size:14px}
+        
+        @media (max-width:1000px){
+            .right-sidebar{
+                display:none;
             }
-
-            .section {
-                padding: 10px;
+            .sidebar{
+                width:70px;
+                padding:10px;
+            }
+            .sidebar span{
+                display:none;
+            }
+            .sidebar .logo{
+                font-size:24px;
+                padding:5px;
+            }
+            .nav-item{
+                justify-content:center;
+                padding:10px;
+                margin-bottom:5px;
+            }
+            .nav-item i{
+                margin-right:0;
+                font-size:22px;
+            }
+            .tweet-btn{
+                font-size:0;
+                padding:10px;
+                width:40px;
+                height:40px;
+                border-radius:50%;
+                margin-top:10px;
+            }
+            .tweet-btn::before{
+                content:'\f099';
+                font-family:'Font Awesome 6 Free';
+                font-weight:900;
+                font-size:18px;
+            }
+        }
+        @media (max-width:600px){
+            body{
+                flex-direction:column;
+            }
+            .sidebar{
+                width:100%;
+                height:auto;
+                flex-direction:row;
+                justify-content:space-evenly;
+                padding:8px 5px;
+                position:fixed;
+                bottom:0;
+                top:auto;
+                border-right:none;
+                border-top:1px solid var(--border);
+                background:var(--bg);
+                z-index:1000;
+            }
+            .sidebar .logo{
+                display:none;
+            }
+            .nav-item{
+                flex:1;
+                padding:8px;
+                margin:0;
+                text-align:center;
+            }
+            .nav-item i{
+                font-size:20px;
+            }
+            .nav-item.active{
+                border-left:none;
+                border-bottom:3px solid var(--primary);
+                transform: scale(1.05); 
+            }
+            .tweet-btn{
+                position:fixed;
+                bottom:70px;
+                right:15px;
+                width:50px;
+                height:50px;
+                padding:0;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+            }
+            .main-content{
+                max-width:100%;
+                margin-bottom:60px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- 视频背景 -->
-    <video class="video-bg" autoplay loop muted playsinline>
-        <source src="https://www.kingsoft.com/media/movie-10.438803e7.mp4" type="video/mp4">
-        您的浏览器不支持视频播放。
-    </video>
-
-    <div class="content">
-        <div class="section">
-            <p>祝你天天开心</p>
-            <p class="same-as-h1">记得双击摸摸哒</p>
+    <div class="sidebar">
+        <div class="logo"></div>
+        <div class="nav-item active" data-target="home"><i class="fas fa-home"></i><span>首页</span></div>
+        <div class="nav-item" data-target="explore"><i class="fas fa-hashtag"></i><span>探索</span></div>
+        <div class="nav-item" data-target="notifications"><i class="far fa-bell"></i><span>通知</span></div>
+        <div class="nav-item" data-target="messages"><i class="far fa-envelope"></i><span>私信</span></div>
+        <button class="tweet-btn">发推</button>
+    </div>
+    <div class="main-content">
+        <div class="header">首页</div>
+        <div class="tweet-box">
+            <div class="tweet-input"><div class="avatar"></div><textarea class="tweet-textarea" placeholder="有什么新鲜事?"></textarea></div>
+            <div class="tweet-actions">
+                <div class="tweet-icons"><i class="far fa-image tweet-icon"></i><i class="fas fa-poll tweet-icon"></i><i class="far fa-smile tweet-icon"></i><i class="far fa-calendar-alt tweet-icon"></i><i class="fas fa-map-marker-alt tweet-icon"></i></div>
+                <button class="tweet-post-btn">推文</button>
+            </div>
         </div>
-        <div class="section">
-            <h1>Hi，欢迎你的到访</h1>
-            <p>by yaliuz</p>
+        <div class="tweet">
+            <div class="avatar" style="background-image: url('https://p3-flow-imagex-sign.byteimg.com/user-avatar/922992e234f7d91158257ff75a80b929~tplv-a9rns2rl98-image.jpeg?rk3s=98c978ad&x-expires=1747813421&x-signature=NSb6OXoev03Md5PmGKvqV3RGk0o%3D');"></div>
+            <div class="tweet-content">
+                <div class="tweet-header"><span class="tweet-name">朱重八</span><span class="tweet-username">@No.8</span><span class="tweet-time">· 康熙二十五年</span></div>
+                <div class="tweet-text">有没有什么攒劲的节目？#九族消消乐</div>
+                <div class="tweet-actions">
+                    <div class="tweet-action"><i class="far fa-comment"></i><span>42</span></div>
+                    <div class="tweet-action"><i class="fas fa-retweet"></i><span>87</span></div>
+                    <div class="tweet-action"><i class="far fa-heart"></i><span>324</span></div>
+                    <div class="tweet-action"><i class="fas fa-share"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="tweet">
+            <div class="avatar" style="background-image: url('https://p3-flow-imagex-sign.byteimg.com/user-avatar/4e70c9ab15360c52c94d7f04d103da0b~tplv-a9rns2rl98-icon-tiny.jpeg?rk3s=98c978ad&x-expires=1747813207&x-signature=zmomZTrzxI0uuPNrf5i49m%2BC2bw%3D');"></div>
+            <div class="tweet-content">
+                <div class="tweet-header"><span class="tweet-name">爱新觉罗·弘历</span><span class="tweet-username">@lilybaby</span><span class="tweet-time">· 民国三十八年</span></div>
+                <div class="tweet-text">好想反清复明啊 #热烈庆祝新中国成立60周年</div>
+                <div class="tweet-actions">
+                    <div class="tweet-action"><i class="far fa-comment"></i><span>24</span></div>
+                    <div class="tweet-action"><i class="fas fa-retweet"></i><span>12</span></div>
+                    <div class="tweet-action"><i class="far fa-heart"></i><span>156</span></div>
+                    <div class="tweet-action"><i class="fas fa-share"></i></div>
+                </div>
+            </div>
         </div>
     </div>
-
+    <div class="right-sidebar">
+        <div class="search-box">
+            <i class="fas fa-search" style="color:var(--sec-text);"></i>
+            <input type="text" class="search-input" placeholder="搜索你不爱看的">
+        </div>
+        <div class="contact-box">
+            <div class="contact-header">联系方式</div>
+            <div class="contact-item">
+                <div class="contact-icon"><i class="fas fa-user"></i></div>
+                <div class="contact-info">
+                    <div class="contact-name">我的信息</div>
+                    <div class="contact-detail">国家安全局</div>
+                </div>
+            </div>
+            <div class="contact-item">
+                <div class="contact-icon"><i class="fas fa-envelope"></i></div>
+                <div class="contact-info">
+                    <div class="contact-name">邮箱</div>
+                    <div class="contact-detail">Hi@yaliu.com</div>
+                </div>
+            </div>
+            <div class="contact-item">
+                <div class="contact-icon"><i class="fab fa-weixin"></i></div>
+                <div class="contact-info">
+                    <div class="contact-name">微信</div>
+                    <div class="contact-detail">yaliuz</div>
+                </div>
+            </div>
+        </div>
+    </div>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const content = document.querySelector('.content');
-            let targetY = 0;
-            let currentY = -getMaxScroll();
-            let scrolling = false;
-            let rafId = null;
-            let startY = 0;
-            let isTouchDevice = 'ontouchstart' in window;
-            let scrollSpeed = isTouchDevice ? 2 : 1; // 触摸设备滚动速度较慢
+        const navItems = document.querySelectorAll('.nav-item');
+        const logo = document.querySelector('.logo');
+        const searchBox = document.querySelector('.search-box');
+        const contactBox = document.querySelector('.contact-box');
+        let currentIndex = 0;
+        let isAnimating = false;
+        const animationDuration = 300;
 
-            function getMaxScroll() {
-                return document.body.scrollHeight - window.innerHeight;
+        // 初始化状态
+        resetRightSidebar();
+
+        // 为导航项添加事件监听
+        navItems.forEach(item => {
+            item.addEventListener('click', handleNavClick);
+            item.addEventListener('mouseenter', handleNavHover);
+        });
+
+        // 鼠标移出侧边栏时恢复默认状态
+        document.querySelector('.sidebar').addEventListener('mouseleave', resetRightSidebar);
+
+        function handleNavClick() {
+            if (isAnimating) return;
+            
+            const target = this.dataset.target;
+            handleNavAction(target);
+            
+            // 更新active状态
+            navItems.forEach(item => item.classList.remove('active'));
+            this.classList.add('active');
+        }
+
+        function handleNavHover() {
+            if (isAnimating) return;
+            
+            const target = this.dataset.target;
+            handleNavAction(target);
+        }
+
+        function handleNavAction(target) {
+            isAnimating = true;
+            
+            // 重置所有效果
+            resetRightSidebar();
+            
+            // 根据目标添加相应效果
+            if (target === 'explore') {
+                searchBox.classList.add('expanded');
+                contactBox.classList.add('collapsed');
+            } else if (target === 'messages') {
+                contactBox.classList.add('expanded');
+                searchBox.classList.remove('expanded');
+            } else {
+                resetRightSidebar();
+            }
+            
+            setTimeout(() => {
+                isAnimating = false;
+            }, animationDuration);
+        }
+
+        function resetRightSidebar() {
+            searchBox.classList.remove('expanded');
+            contactBox.classList.remove('expanded', 'collapsed');
+        }
+
+        window.addEventListener('wheel', (event) => {
+            if (isAnimating) return;
+
+            logo.style.backgroundImage = "url('https://www.ysjf.com/assets/ysjf_active@2x-BTnDL7hV.png')";
+            setTimeout(() => {
+                logo.style.backgroundImage = "url('https://www.ysjf.com/assets/ysjf@2x-DcH_D2DE.png')";
+            }, 500);
+
+            if (event.deltaY > 0) {
+                currentIndex = (currentIndex + 1) % navItems.length;
+            } else {
+                currentIndex = (currentIndex - 1 + navItems.length) % navItems.length;
             }
 
-            function initPosition() {
-                const maxScroll = getMaxScroll();
-                targetY = -maxScroll;
-                currentY = -maxScroll;
-                updatePosition();
-            }
+            isAnimating = true;
 
-            function updatePosition() {
-                content.style.transform = `translateY(${currentY}px)`;
-            }
-
-            function animate() {
-                currentY += (targetY - currentY) * 0.15;
-
-                if (Math.abs(targetY - currentY) < 0.5) {
-                    currentY = targetY;
-                    scrolling = false;
-                    cancelAnimationFrame(rafId);
-                    rafId = null;
-                }
-
-                updatePosition();
-
-                if (scrolling) {
-                    rafId = requestAnimationFrame(animate);
-                }
-            }
-
-            function handleScroll(e) {
-                if (!scrolling) {
-                    scrolling = true;
-                    if (!rafId) {
-                        rafId = requestAnimationFrame(animate);
-                    }
-                }
-
-                let delta = 0;
-                if (e.deltaY) {
-                    delta = e.deltaY * scrollSpeed;
-                }
-
-                if (delta > 0) {
-                    targetY += 20;
-                } else if (delta < 0) {
-                    targetY -= 20;
-                }
-
-                const maxScroll = getMaxScroll();
-                targetY = Math.min(0, Math.max(-maxScroll, targetY));
-            }
-
-            function handleTouchStart(e) {
-                startY = e.touches[0].clientY;
-            }
-
-            function handleTouchMove(e) {
-                if (!scrolling) {
-                    scrolling = true;
-                    if (!rafId) {
-                        rafId = requestAnimationFrame(animate);
-                    }
-                }
-
-                const y = e.touches[0].clientY;
-                const delta = startY - y;
-                startY = y;
-
-                targetY += delta * scrollSpeed;
-
-                const maxScroll = getMaxScroll();
-                targetY = Math.min(0, Math.max(-maxScroll, targetY));
-
-                e.preventDefault();
-            }
-
-            initPosition();
-
-            window.addEventListener('wheel', handleScroll, { passive: false });
-            window.addEventListener('touchstart', handleTouchStart, { passive: false });
-            window.addEventListener('touchmove', handleTouchMove, { passive: false });
-
-            window.addEventListener('resize', function() {
-                const maxScroll = getMaxScroll();
-                targetY = Math.min(0, Math.max(-maxScroll, targetY));
+            navItems.forEach((item) => {
+                item.classList.remove('active');
             });
+
+            const activeItem = navItems[currentIndex];
+            activeItem.classList.add('active');
+            
+            // 触发对应导航项的效果
+            const target = activeItem.dataset.target;
+            handleNavAction(target);
+
+            setTimeout(() => {
+                isAnimating = false;
+            }, animationDuration);
         });
     </script>
 </body>
