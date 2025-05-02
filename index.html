@@ -81,6 +81,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            width: 40px;
+            height: 40px;
+            overflow: hidden;
         }
 
         .theme-toggle:hover {
@@ -96,8 +99,9 @@
         }
 
         .theme-toggle img {
-            width: 24px;
-            height: 24px;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
             transition: transform 0.5s ease;
         }
 
@@ -335,7 +339,25 @@
             perspective: 1000px;
         }
 
-        /* 优化桌面端侧边栏展开时的内容动画 */
+        /* Enhanced text visibility in dark mode with frosted glass effect */
+        .card-content {
+            padding: 12px;
+            position: relative;
+        }
+
+        body:not(.light-theme) .card-content {
+            background: rgba(32, 32, 32, 0.7);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 0 0 8px 8px;
+        }
+
+        body:not(.light-theme) .card-title,
+        body:not(.light-theme) .card-meta {
+            color: #ffffff;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
         @media (min-width: 769px) {
             .content-grid {
                 perspective: 1000px;
@@ -430,7 +452,6 @@
             color: white;
         }
 
-        /* 优化移动端幻灯片 */
         .slider-container {
             display: none;
             width: 100%;
@@ -707,7 +728,7 @@
     <header>
         <div class="logo-container">
             <div class="theme-toggle" id="themeToggle">
-                <img src="https://www.ysjf.com/assets/ysjf@2x-DcH_D2DE.png" alt="Theme toggle">
+                <img src="https://www.ysjf.com/assets/ysjf_active@2x-BTnDL7hV.png" alt="Theme toggle">
             </div>
             <img src="hv" alt="Logo" class="logo">
         </div>
@@ -762,8 +783,7 @@
             <div class="sidebar-item">
                 <div class="sidebar-item-icon">
                     <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-                        <path d="M12 3.67c-4.58 0-8.33 3.75-8.33 8.33s3.75 8.33 8.33 8.33 8.33-3.75 8.33-8.33S16.58 3.67 12 3.67zm0 15c-3.68 0-6.67-2.99-6.67-6.67S8.32 5.33 12 5.33s6.67 2.99 6.67 6.67-2.99 6.67-6.67 6.67zm1-11.67h-1v5l3.9 2.34.6-.92-3.5-2.08V7z"></path>
-
+                        <path d="M12 3.67c-4.58 0-8.33 3.75-8.33 8.33s3.75 8.33 8.33 8.33 8.33-3.75 8.33-8.33c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"></path>
                     </svg>
                 </div>
                 <div class="sidebar-item-text">您的视频</div>
@@ -772,7 +792,7 @@
         
         <div class="sidebar-section">
             <div class="sidebar-section-title">设置</div>
-            <div class="sidebar-item">
+            <div class="sidebar-item theme-toggle-item">
                 <div class="sidebar-item-icon">
                     <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
                         <path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"></path>
@@ -793,7 +813,6 @@
     
     <div class="content">
         <div class="content-container">
-            <!-- 移动端幻灯片 -->
             <div class="slider-container" id="sliderContainer">
                 <div class="slider" id="slider">
                     <div class="slide">
@@ -928,11 +947,20 @@
         const sliderContainer = document.getElementById('sliderContainer');
         const slider = document.getElementById('slider');
         const sliderDots = document.querySelectorAll('.slider-dot');
+        const settingsToggle = document.querySelector('.theme-toggle-item');
 
-        const currentTheme = localStorage.getItem('theme');
+        // Initialize theme and icons
+        const currentTheme = localStorage.getItem('theme') || 'dark';
+        const themeIcons = {
+            light: 'https://www.ysjf.com/assets/ysjf@2x-DcH_D2DE.png',
+            dark: 'https://www.ysjf.com/assets/ysjf_active@2x-BTnDL7hV.png'
+        };
+
         if (currentTheme === 'light') {
             body.classList.add('light-theme');
-            themeToggle.querySelector('img').src = "https://www.ysjf.com/assets/ysjf_active@2x-BTnDL7hV.png";
+            themeToggle.querySelector('img').src = themeIcons.light;
+        } else {
+            themeToggle.querySelector('img').src = themeIcons.dark;
         }
 
         let sidebarExpanded = true;
@@ -944,16 +972,45 @@
         let touchStartX = 0;
         let touchEndX = 0;
 
-        // 优化移动端幻灯片
+        // Theme toggle function
+        function toggleTheme(element) {
+            if (element === themeToggle) {
+                themeToggle.classList.add('rotate');
+            }
+            
+            setTimeout(() => {
+                body.classList.toggle('light-theme');
+                const theme = body.classList.contains('light-theme') ? 'light' : 'dark';
+                localStorage.setItem('theme', theme);
+                
+                // Update header toggle icon
+                themeToggle.querySelector('img').src = themeIcons[theme];
+                
+                if (element === themeToggle) {
+                    themeToggle.classList.remove('rotate');
+                }
+            }, 500);
+        }
+
+        // Theme toggle handlers
+        themeToggle.addEventListener('click', () => toggleTheme(themeToggle));
+        if (settingsToggle) {
+            settingsToggle.addEventListener('click', () => toggleTheme(settingsToggle));
+        }
+
+        // Slider functions
         function initSlider() {
             if (window.innerWidth > 768) return;
             
-            // 自动轮播
             slideInterval = setInterval(() => {
-                goToSlide((currentSlide + 1) % 3);
+                // Random slide selection, ensuring it's different from current
+                let nextSlide;
+                do {
+                    nextSlide = Math.floor(Math.random() * 3);
+                } while (nextSlide === currentSlide);
+                goToSlide(nextSlide);
             }, 3000);
             
-            // 点按切换
             sliderDots.forEach(dot => {
                 dot.addEventListener('click', function() {
                     goToSlide(parseInt(this.dataset.index));
@@ -961,7 +1018,6 @@
                 });
             });
             
-            // 触摸滑动
             slider.addEventListener('touchstart', handleTouchStart, { passive: true });
             slider.addEventListener('touchmove', handleTouchMove, { passive: false });
             slider.addEventListener('touchend', handleTouchEnd, { passive: true });
@@ -977,7 +1033,7 @@
             touchEndX = e.touches[0].clientX;
             const diff = touchStartX - touchEndX;
             if (Math.abs(diff) > 10) {
-                e.preventDefault(); // 阻止默认滚动行为
+                e.preventDefault();
                 slider.style.transition = 'none';
                 slider.style.transform = `translateX(calc(-${currentSlide * 100}% - ${diff}px))`;
             }
@@ -989,13 +1045,10 @@
             const diff = touchStartX - touchEndX;
             
             if (diff > threshold) {
-                // 向左滑动 - 下一张
                 goToSlide((currentSlide + 1) % 3);
             } else if (diff < -threshold) {
-                // 向右滑动 - 上一张
                 goToSlide((currentSlide - 1 + 3) % 3);
             } else {
-                // 回弹到当前幻灯片
                 goToSlide(currentSlide);
             }
             
@@ -1014,7 +1067,11 @@
         function resetSlideInterval() {
             clearInterval(slideInterval);
             slideInterval = setInterval(() => {
-                goToSlide((currentSlide + 1) % 3);
+                let nextSlide;
+                do {
+                    nextSlide = Math.floor(Math.random() * 3);
+                } while (nextSlide === currentSlide);
+                goToSlide(nextSlide);
             }, 3000);
         }
 
@@ -1048,26 +1105,6 @@
         checkScreenSize();
         window.addEventListener('resize', checkScreenSize);
 
-        // Theme toggle with rotation animation
-        themeToggle.addEventListener('click', () => {
-            themeToggle.classList.add('rotate');
-            
-            setTimeout(() => {
-                body.classList.toggle('light-theme');
-                const theme = body.classList.contains('light-theme') ? 'light' : 'dark';
-                localStorage.setItem('theme', theme);
-                
-                // 切换图标
-                if (theme === 'light') {
-                    themeToggle.querySelector('img').src = "https://www.ysjf.com/assets/ysjf_active@2x-BTnDL7hV.png";
-                } else {
-                    themeToggle.querySelector('img').src = "https://www.ysjf.com/assets/ysjf@2x-DcH_D2DE.png";
-                }
-                
-                themeToggle.classList.remove('rotate');
-            }, 500);
-        });
-
         // Sidebar hover for desktop
         sidebar.addEventListener('mouseenter', () => {
             if (window.innerWidth > 768) {
@@ -1094,9 +1131,11 @@
         // Sidebar and bottom nav interactions
         menuItems.forEach(item => {
             item.addEventListener('click', function() {
-                menuItems.forEach(i => i.classList.remove('active'));
-                this.classList.add('active');
-                if (window.innerWidth <= 768) {
+                if (!this.classList.contains('theme-toggle-item')) {
+                    menuItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                }
+                if (window.innerWidth <= 768 && !this.classList.contains('theme-toggle-item')) {
                     sidebar.classList.remove('visible');
                     overlay.classList.remove('visible');
                     isMenuOpen = false;
@@ -1135,25 +1174,22 @@
             });
         });
 
-        // 改进的滚动逻辑 - 底部导航栏显示/隐藏
+        // Scroll logic for bottom nav
         window.addEventListener('scroll', () => {
             if (window.innerWidth > 768) return;
             
             const currentScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
             
-            // 向下滚动超过50px时隐藏底部导航栏
             if (currentScrollPosition > lastScrollPosition && currentScrollPosition > 50) {
                 bottomNav.classList.add('hidden');
-            } 
-            // 向上滚动或接近顶部时立即显示底部导航栏
-            else {
+            } else {
                 bottomNav.classList.remove('hidden');
             }
             
             lastScrollPosition = currentScrollPosition <= 0 ? 0 : currentScrollPosition;
         });
 
-        // 修复侧边栏滚动问题
+        // Fix sidebar scrolling
         sidebar.addEventListener('touchstart', function(e) {
             if (this.scrollHeight > this.clientHeight) {
                 e.stopPropagation();
