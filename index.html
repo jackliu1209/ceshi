@@ -1,459 +1,938 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twitter风格页面</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>YSJF - 优化导航栏</title>
     <style>
-        *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;transition:all .3s ease}
-        :root{--bg:#fff;--text:#0f1419;--border:#e0e0e0;--hover:#f5f5f5;--primary:#007bff;--sec-text:#536471;--shadow:0 2px 4px rgba(0,0,0,.1)}
-        body{display:flex;height:100vh;background:var(--bg);color:var(--text)}
-        .sidebar{
-            width:250px;
-            padding:20px;
-            border-right:1px solid var(--border);
-            display:flex;
-            flex-direction:column;
-            box-shadow:2px 0 5px rgba(0,0,0,.05);
-            position:sticky;
-            top:0;
-            height:100vh;
-            z-index:10;
+        :root {
+            --primary-color: #ff0000;
+            --dark-bg: #0f0f0f;
+            --dark-surface: #202020;
+            --dark-text: #f1f1f1;
+            --dark-hover: #303030;
+            --light-bg: #ffffff;
+            --light-surface: #f9f9f9;
+            --light-text: #030303;
+            --light-hover: #e5e5e5;
+            --transition-speed: 0.3s;
+            --sidebar-width: 240px;
+            --sidebar-collapsed-width: 72px;
+            --header-height: 56px;
         }
-        .logo{
-            font-size:30px;
-            margin-bottom:25px;
-            padding:10px;
-            color:var(--primary);
-            width: 40px;
-            height: 40px;
-            background-image: url('https://www.ysjf.com/assets/ysjf@2x-DcH_D2DE.png');
-            background-size: contain;
-            background-repeat: no-repeat;
-            transition: background-image 0.3s ease;
-            margin-left: auto;
-            margin-right: auto;
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Oxygen, Ubuntu, Cantarell, sans-serif;
         }
-        .logo:hover {
-            background-image: url('https://www.ysjf.com/assets/ysjf_active@2x-BTnDL7hV.png');
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--dark-text);
+            transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
         }
-        .nav-item{
-            display:flex;
-            align-items:center;
-            padding:12px 15px;
-            margin-bottom:8px;
-            border-radius:10px;
-            font-size:18px;
-            cursor:pointer;
-            touch-action:manipulation;
-            position:relative;
-            overflow:hidden;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            color: var(--primary);
-            font-weight: 600;
-            justify-content: flex-start;
+
+        body.light-theme {
+            background-color: var(--light-bg);
+            color: var(--light-text);
         }
-        .nav-item:hover{
-            color:var(--primary);
-            background-color: var(--hover);
-        }
-        .nav-item.active{
-            background:var(--hover);
-            font-weight:700;
-            border-left:3px solid var(--primary);
-            transform: scale(1.05); 
-        }
-        .nav-item i{
-            margin-right:12px;
-            color:var(--primary);
-        }
-        .nav-item::before {
-            content: '';
-            position: absolute;
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            height: var(--header-height);
+            background-color: var(--dark-bg);
+            position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--primary);
+            right: 0;
+            z-index: 1000;
+            border-bottom: 1px solid var(--dark-hover);
+            transition: all var(--transition-speed) ease;
+        }
+
+        body.light-theme header {
+            background-color: var(--light-bg);
+            border-bottom: 1px solid var(--light-hover);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            height: 30px;
+            width: auto;
+        }
+
+        .theme-toggle {
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 50%;
+            transition: background-color var(--transition-speed) ease, transform 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .theme-toggle:hover {
+            background-color: var(--dark-hover);
+            transform: scale(1.1);
+        }
+
+        body.light-theme .theme-toggle:hover {
+            background-color: var(--light-hover);
+        }
+
+        .theme-toggle:active {
+            transform: scale(0.95);
+        }
+
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .user-controls {
+            display: flex;
+            align-items: center;
+            min-width: 0;
+            position: relative;
+        }
+
+        .control-icon {
+            padding: 8px;
+            margin-left: 4px;
+            cursor: pointer;
+            border-radius: 50%;
+            transition: background-color var(--transition-speed) ease, transform 0.2s ease;
+        }
+
+        .control-icon:hover {
+            background-color: var(--dark-hover);
+            transform: scale(1.1);
+        }
+
+        body.light-theme .control-icon:hover {
+            background-color: var(--light-hover);
+        }
+
+        .control-icon:active {
+            transform: scale(0.95);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 48px;
+            right: 8px;
+            background-color: var(--dark-surface);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            min-width: 160px;
+            z-index: 1100;
             opacity: 0;
-            transition: opacity 0.3s ease-in-out;
-            z-index: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: opacity var(--transition-speed) ease, transform var(--transition-speed) ease;
         }
-        .nav-item:hover::before {
-            opacity: 0.1;
+
+        body.light-theme .dropdown-menu {
+            background-color: var(--light-surface);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
-        .nav-item span {position: relative; z-index: 1;}
-        .tweet-btn{
-            background-color:var(--primary);
-            color:white;
-            border:none;
-            border-radius:25px;
-            padding:12px;
-            font-size:16px;
-            font-weight:600;
-            margin-top:15px;
-            cursor:pointer;
-            width:100%;
-            box-shadow:var(--shadow);
-            touch-action:manipulation;
+
+        .dropdown-menu.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
         }
-        .tweet-btn:hover{
-            background-color:#0056b3;
+
+        .dropdown-item {
+            padding: 12px 16px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color var(--transition-speed) ease;
         }
-        .main-content{flex:1;max-width:600px;border-right:1px solid var(--border);overflow-y:auto}
-        .header{padding:15px 20px;font-size:20px;font-weight:700;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(255,255,255,.8);backdrop-filter:blur(10px)}
-        .tweet-box{padding:15px;border-bottom:1px solid var(--border)}
-        .tweet-input{display:flex}
-        .avatar{
-            width:50px;
-            height:50px;
-            border-radius:50%;
-            background-image: url('https://thirdwx.qlogo.cn/mmopen/vi_32/FmXo0ZgeSGcMnUbiaxJxZe4IbMO8uVpho2u4QYEWN3FibxkbrfWkEXFGNGmtyhouaCYsdY2jjrBibibXlQ1iaJgxKErfHF9vl6BxcHiaYBCiageneU/132');
-            background-size: cover;
-            margin-right:15px
+
+        .dropdown-item:hover {
+            background-color: var(--dark-hover);
         }
-        .tweet-textarea{flex:1;background:0 0;border:none;color:var(--text);font-size:20px;resize:none;height:100px;outline:0}
-        .tweet-actions{display:flex;justify-content:space-between;align-items:center;margin-top:15px;padding-left:65px}
-        .tweet-icons{display:flex}
-        .tweet-icon{color:var(--primary);margin-right:15px;cursor:pointer}
-        .tweet-post-btn{background:var(--primary);color:#fff;border:none;border-radius:20px;padding:8px 16px;font-weight:700;cursor:pointer}
-        .tweet{padding:15px;border-bottom:1px solid var(--border);display:flex}
-        .tweet-content{flex:1}
-        .tweet-header{display:flex;align-items:center;margin-bottom:5px}
-        .tweet-name{font-weight:700;margin-right:5px}
-        .tweet-username,.tweet-time{color:var(--sec-text);margin-right:5px}
-        .tweet-text{margin-bottom:10px;font-size:15px;line-height:1.3}
-        .tweet-actions{display:flex;justify-content:space-between;max-width:400px;color:var(--sec-text)}
-        .tweet-action{display:flex;align-items:center}
-        .tweet-action i{margin-right:5px}
-        .right-sidebar{
-            width:350px;
-            padding:20px;
-            position:relative;
+
+        body.light-theme .dropdown-item:hover {
+            background-color: var(--light-hover);
         }
-        .search-box{
-            background:#f0f0f0;
-            border-radius:20px;
-            padding:12px;
-            display:flex;
-            align-items:center;
-            margin-bottom:20px;
-            transition:all 0.3s ease;
-            position:relative;
-            z-index:2;
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            margin-left: 8px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
         }
-        .search-box.expanded{
-            transform:scale(1.1);
-            margin:20px auto;
-            width:80%;
-            box-shadow:0 5px 15px rgba(0,0,0,0.1);
+
+        .user-avatar:hover {
+            transform: scale(1.1);
         }
-        .search-input{background:0 0;border:none;color:var(--text);margin-left:10px;width:100%;outline:0}
-        .trending-box{background:#f7f7f7;border-radius:15px;margin-bottom:20px}
-        .trending-header{padding:15px;font-size:20px;font-weight:700}
-        .trending-item{padding:15px;cursor:pointer}
-        .trending-item:hover{background:#eaeaea}
-        .trending-category{color:var(--sec-text);font-size:13px}
-        .trending-name{font-weight:700;margin:5px 0}
-        .trending-tweets{color:var(--sec-text);font-size:13px}
-        
-        /* 新增的联系方式样式 */
-        .contact-box{
-            background:#f7f7f7;
-            border-radius:15px;
-            margin-bottom:20px;
-            transition:all 0.3s ease;
-            max-height:300px;
-            overflow:hidden;
-            position:relative;
-            z-index:1;
+
+        .user-avatar:active {
+            transform: scale(0.95);
         }
-        .contact-box.collapsed{
-            max-height:0;
-            margin:0;
-            opacity:0;
+
+        .main-content {
+            display: flex;
+            margin-top: var(--header-height);
+            transition: margin-left var(--transition-speed) ease;
         }
-        .contact-box.expanded{
-            transform:scale(1.05);
-            margin:20px auto;
-            width:90%;
-            box-shadow:0 5px 15px rgba(0,0,0,0.1);
+
+        .sidebar {
+            width: var(--sidebar-width);
+            padding: 12px 0;
+            background-color: var(--dark-bg);
+            height: calc(100vh - var(--header-height));
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            overflow-y: auto;
+            z-index: 900;
+            transition: width var(--transition-speed) ease, transform var(--transition-speed) ease;
+            transform: translateX(0);
+            will-change: width, transform;
         }
-        .contact-header{padding:15px;font-size:20px;font-weight:700}
-        .contact-item{padding:15px;display:flex;align-items:center;border-bottom:1px solid var(--border)}
-        .contact-item:last-child{border-bottom:none}
-        .contact-item:hover{background:#eaeaea}
-        .contact-icon{width:40px;height:40px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;margin-right:15px;font-size:18px}
-        .contact-info{flex:1}
-        .contact-name{font-weight:700;margin-bottom:3px}
-        .contact-detail{color:var(--sec-text);font-size:14px}
-        
-        @media (max-width:1000px){
-            .right-sidebar{
-                display:none;
+
+        body.light-theme .sidebar {
+            background-color: var(--light-bg);
+        }
+
+        .sidebar.collapsed {
+            width: var(--sidebar-collapsed-width);
+            overflow-x: hidden;
+        }
+
+        .sidebar.collapsed .sidebar-item-text,
+        .sidebar.collapsed .sidebar-section-title {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .sidebar-section {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--dark-hover);
+            transition: border-color var(--transition-speed) ease;
+        }
+
+        body.light-theme .sidebar-section {
+            border-bottom: 1px solid var(--light-hover);
+        }
+
+        .sidebar-section-title {
+            padding: 8px 24px;
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--dark-text);
+            opacity: 0.7;
+            transition: all var(--transition-speed) ease;
+        }
+
+        body.light-theme .sidebar-section-title {
+            color: var(--light-text);
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            padding: 0 12px 0 24px;
+            height: 40px;
+            cursor: pointer;
+            overflow: hidden;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .sidebar-item:hover {
+            background-color: var(--dark-hover);
+        }
+
+        body.light-theme .sidebar-item:hover {
+            background-color: var(--light-hover);
+        }
+
+        .sidebar-item.active {
+            background-color: var(--dark-hover);
+            font-weight: bold;
+        }
+
+        body.light-theme .sidebar-item.active {
+            background-color: var(--light-hover);
+        }
+
+        .sidebar-item-icon {
+            min-width: 24px;
+            margin-right: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: margin var(--transition-speed) ease;
+        }
+
+        .sidebar.collapsed .sidebar-item-icon {
+            margin-right: 0;
+        }
+
+        .sidebar-item-text {
+            font-size: 14px;
+            white-space: nowrap;
+            transition: opacity var(--transition-speed) ease;
+        }
+
+        .content {
+            flex-grow: 1;
+            padding: 20px;
+            margin-left: var(--sidebar-width);
+            transition: margin-left var(--transition-speed) ease;
+            will-change: margin-left;
+            transform: translateZ(0);
+        }
+
+        .sidebar.collapsed ~ .content {
+            margin-left: var(--sidebar-collapsed-width);
+        }
+
+        .content-container {
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .content-header {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .content-title {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .content-filters {
+            display: flex;
+            gap: 10px;
+        }
+
+        .filter-button {
+            padding: 8px 16px;
+            background-color: var(--dark-surface);
+            border: none;
+            border-radius: 20px;
+            color: var(--dark-text);
+            cursor: pointer;
+            transition: all var(--transition-speed) ease;
+        }
+
+        body.light-theme .filter-button {
+            background-color: var(--light-surface);
+            color: var(--light-text);
+        }
+
+        .filter-button:hover {
+            background-color: var(--dark-hover);
+        }
+
+        body.light-theme .filter-button:hover {
+            background-color: var(--light-hover);
+        }
+
+        .filter-button.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .content-grid {
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .content-card {
+            background-color: var(--dark-surface);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+        }
+
+        body.light-theme .content-card {
+            background-color: var(--light-surface);
+        }
+
+        .content-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+
+        .card-content {
+            padding: 12px;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-meta {
+            font-size: 14px;
+            color: #aaa;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        body.light-theme .card-meta {
+            color: #666;
+        }
+
+        .bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--dark-surface);
+            height: 60px;
+            z-index: 1000;
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.2);
+            transition: transform var(--transition-speed) ease;
+        }
+
+        body.light-theme .bottom-nav {
+            background-color: var(--light-surface);
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .bottom-nav.hidden {
+            transform: translateY(100%);
+        }
+
+        .bottom-nav-items {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            height: 100%;
+        }
+
+        .bottom-nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--dark-text);
+            font-size: 12px;
+            cursor: pointer;
+            padding: 8px;
+            transition: background-color var(--transition-speed) ease;
+        }
+
+        body.light-theme .bottom-nav-item {
+            color: var(--light-text);
+        }
+
+        .bottom-nav-item:hover {
+            background-color: var(--dark-hover);
+        }
+
+        body.light-theme .bottom-nav-item:hover {
+            background-color: var(--light-hover);
+        }
+
+        .bottom-nav-item.active {
+            color: var(--primary-color);
+        }
+
+        .bottom-nav-item svg {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 4px;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 850;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--transition-speed) ease;
+        }
+
+        .overlay.visible {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+                z-index: 950;
             }
-            .sidebar{
-                width:70px;
-                padding:10px;
+
+            .sidebar.visible {
+                transform: translateX(0);
             }
-            .sidebar span{
-                display:none;
+
+            .content {
+                margin-left: 0;
+                padding: 16px;
+                padding-top: calc(var(--header-height) + 56px);
+                padding-bottom: 80px;
             }
-            .sidebar .logo{
-                font-size:24px;
-                padding:5px;
+
+            .bottom-nav {
+                display: block;
             }
-            .nav-item{
-                justify-content:center;
-                padding:10px;
-                margin-bottom:5px;
+
+            .content-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
             }
-            .nav-item i{
-                margin-right:0;
-                font-size:22px;
+
+            .content-filters {
+                width: 100%;
+                overflow-x: auto;
+                padding-bottom: 8px;
             }
-            .tweet-btn{
-                font-size:0;
-                padding:10px;
-                width:40px;
-                height:40px;
-                border-radius:50%;
-                margin-top:10px;
-            }
-            .tweet-btn::before{
-                content:'\f099';
-                font-family:'Font Awesome 6 Free';
-                font-weight:900;
-                font-size:18px;
+
+            .content-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
             }
         }
-        @media (max-width:600px){
-            body{
-                flex-direction:column;
+
+        @media (max-width: 480px) {
+            .content-grid {
+                grid-template-columns: 1fr;
             }
-            .sidebar{
-                width:100%;
-                height:auto;
-                flex-direction:row;
-                justify-content:space-evenly;
-                padding:8px 5px;
-                position:fixed;
-                bottom:0;
-                top:auto;
-                border-right:none;
-                border-top:1px solid var(--border);
-                background:var(--bg);
-                z-index:1000;
-            }
-            .sidebar .logo{
-                display:none;
-            }
-            .nav-item{
-                flex:1;
-                padding:8px;
-                margin:0;
-                text-align:center;
-            }
-            .nav-item i{
-                font-size:20px;
-            }
-            .nav-item.active{
-                border-left:none;
-                border-bottom:3px solid var(--primary);
-                transform: scale(1.05); 
-            }
-            .tweet-btn{
-                position:fixed;
-                bottom:70px;
-                right:15px;
-                width:50px;
-                height:50px;
-                padding:0;
-                display:flex;
-                align-items:center;
-                justify-content:center;
-            }
-            .main-content{
-                max-width:100%;
-                margin-bottom:60px;
+
+            .card-image {
+                height: 200px;
             }
         }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .sidebar-item {
+            animation: slideIn 0.3s ease forwards;
+            opacity: 0;
+        }
+
+        .sidebar-item:nth-child(1) { animation-delay: 0.1s; }
+        .sidebar-item:nth-child(2) { animation-delay: 0.15s; }
+        .sidebar-item:nth-child(3) { animation-delay: 0.2s; }
+        .sidebar-item:nth-child(4) { animation-delay: 0.25s; }
+        .sidebar-item:nth-child(5) { animation-delay: 0.3s; }
+        .sidebar-item:nth-child(6) { animation-delay: 0.35s; }
+        .sidebar-item:nth-child(7) { animation-delay: 0.4s; }
+        .sidebar-item:nth-child(8) { animation-delay: 0.45s; }
+        .sidebar-item:nth-child(9) { animation-delay: 0.5s; }
+        .sidebar-item:nth-child(10) { animation-delay: 0.55s; }
     </style>
 </head>
 <body>
-    <div class="sidebar">
-        <div class="logo"></div>
-        <div class="nav-item active" data-target="home"><i class="fas fa-home"></i><span>首页</span></div>
-        <div class="nav-item" data-target="explore"><i class="fas fa-hashtag"></i><span>探索</span></div>
-        <div class="nav-item" data-target="notifications"><i class="far fa-bell"></i><span>通知</span></div>
-        <div class="nav-item" data-target="messages"><i class="far fa-envelope"></i><span>私信</span></div>
-        <button class="tweet-btn">发推</button>
+    <div class="overlay" id="overlay"></div>
+    
+    <header>
+        <div class="logo-container">
+            <div class="theme-toggle" id="themeToggle">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"></path>
+                </svg>
+            </div>
+            <img src="hv" alt="Logo" class="logo">
+        </div>
+        
+        <div class="user-controls">
+            <div class="control-icon" id="userMenuToggle">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
+                </svg>
+            </div>
+            <div class="dropdown-menu" id="userMenu">
+                <div class="dropdown-item" onclick="alert('View Profile')">查看个人资料</div>
+                <div class="dropdown-item" onclick="alert('Open Settings')">设置</div>
+                <div class="dropdown-item" onclick="alert('Logging out...')">退出登录</div>
+            </div>
+            <img src="https://thirdwx.qlogo.cn/mmopen/vi_32/FmXo0ZgeSGcMnUbiaxJxZe4IbMO8uVpho2u4QYEWN3FibxkbrfWkEXFGNGmtyhouaCYsdY2jjrBibibXlQ1iaJgxKErfHF9vl6BxcHiaYBCiageneU/132" alt="User Avatar" class="user-avatar">
+        </div>
+    </header>
+    
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-item active">
+                <div class="sidebar-item-icon">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path>
+                    </svg>
+                </div>
+                <div class="sidebar-item-text">首页</div>
+            </div>
+            <div class="sidebar-item">
+                <div class="sidebar-item-icon">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                        <path d="M10 14.65v-5.3L15 12l-5 2.65zm7.77-4.33c-.77-.32-1.2-.5-1.2-.5L18 9.06c1.84-.96 2.53-3.23 1.56-5.06s-3.24-2.53-5.07-1.56L6 6.94c-1.29.68-2.07 2.04-2 3.49.07 1.42.93 2.67 2.22 3.25.03.01 1.2.5 1.2.5L6 14.93c-1.83.97-2.53 3.24-1.56 5.07.97 1.83 3.24 2.53 5.07 1.56l8.5-4.5c1.29-.68 2.06-2.04 1.99-3.49-.07-1.42-.94-2.68-2.23-3.25zm-.23 5.86l-8.5 4.5c-1.34.71-3.01.2-3.72-1.14-.71-1.34-.2-3.01 1.14-3.72l2.04-1.08v-1.21l-.69-.28-1.11-.46c-.99-.41-1.65-1.35-1.7-2.41-.05-1.06.52-2.06 1.46-2.56l8.5-4.5c1.34-.71 3.01-.2 3.72 1.14.71 1.34.2 3.01-1.14 3.72L15.5 9.26v1.21l1.8.74c.99.41 1.65 1.35 1.7 2.41.05 1.06-.52 2.06-1.46 2.56z"></path>
+                    </svg>
+                </div>
+                <div class="sidebar-item-text">Shorts</div>
+            </div>
+            <div class="sidebar-item">
+                <div class="sidebar-item-icon">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                        <path d="M10 18v-6l5 3-5 3zm7-15H7v1h10V3zm3 3H4v1h16V6zm2 3H2v12h20V9zM3 10h18v10H3V10z"></path>
+                    </svg>
+                </div>
+                <div class="sidebar-item-text">订阅内容</div>
+            </div>
+        </div>
+        
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">探索</div>
+            <div class="sidebar-item">
+                <div class="sidebar-item-icon">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                        <path d="M11 7l6 3.5-6 3.5V7zm7 13H4V6H3v15h15v-1zm3-2H6V3h15v15zM7 17h13V4H7v13z"></path>
+                    </svg>
+                </div>
+                <div class="sidebar-item-text">媒体库</div>
+            </div>
+            <div class="sidebar-item">
+                <div class="sidebar-item-icon">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                        <path d="M14.97 16.95L10 13.87V7h2v5.76l4.03 2.49-1.06 1.7zM12 3c-4.96 0-9 4.04-9 9s4.04 9 9 9 9-4.04 9-9-4.04-9-9-9m0-1c5.52 0 10 4.48 10 10s-4.48 10-10 10S2 17.52 2 12 6.48 2 12 2z"></path>
+                    </svg>
+                </div>
+                <div class="sidebar-item-text">历史记录</div>
+            </div>
+        </div>
+        
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">个人</div>
+            <div class="sidebar-item">
+                <div class="sidebar-item-icon">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                        <path d="M12 3.67c-4.58 0-8.33 3.75-8.33 8.33s3.75 8.33 8.33 8.33 8.33-3.75 8.33-8.33S16.58 3.67 12 3.67zm0 15c-3.68 0-6.67-2.99-6.67-6.67S8.32 5.33 12 5.33s6.67 2.99 6.67 6.67-2.99 6.67-6.67 6.67zm1-11.67h-1v5l3.9 2.34.6-.92-3.5-2.08V7z"></path>
+                    </svg>
+                </div>
+                <div class="sidebar-item-text">您的视频</div>
+            </div>
+            <div class="sidebar-item">
+                <div class="sidebar-item-icon">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                        <path d="M18.77 11h-4.23l1.52-4.94C16.38 5.03 15.54 4 14.38 4c-.58 0-1.14.24-1.52.65L7 11H3v10h4v-9.65l1-1.27 4.58 6.02c.34.44.85.68 1.4.68h6.67c1.03 0 1.98-.79 1.98-1.81l.63-4.47c.1-.7-.37-1.37-1.07-1.58zM7 15H5v-2h2v2zm-2 4v-2h2v2H5zm12 0h-4v-2h4v2zm0-4h-4v-2h4v2z"></path>
+                    </svg>
+                </div>
+                <div class="sidebar-item-text">喜欢的内容</div>
+            </div>
+        </div>
+        
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">设置</div>
+            <div class="sidebar-item">
+                <div class="sidebar-item-icon">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                        <path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"></path>
+                    </svg>
+                </div>
+                <div class="sidebar-item-text">设置</div>
+            </div>
+            <div class="sidebar-item">
+                <div class="sidebar-item-icon">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"></path>
+                    </svg>
+                </div>
+                <div class="sidebar-item-text">报告问题</div>
+            </div>
+        </div>
     </div>
-    <div class="main-content">
-        <div class="header">首页</div>
-        <div class="tweet-box">
-            <div class="tweet-input"><div class="avatar"></div><textarea class="tweet-textarea" placeholder="有什么新鲜事?"></textarea></div>
-            <div class="tweet-actions">
-                <div class="tweet-icons"><i class="far fa-image tweet-icon"></i><i class="fas fa-poll tweet-icon"></i><i class="far fa-smile tweet-icon"></i><i class="far fa-calendar-alt tweet-icon"></i><i class="fas fa-map-marker-alt tweet-icon"></i></div>
-                <button class="tweet-post-btn">推文</button>
-            </div>
-        </div>
-        <div class="tweet">
-            <div class="avatar" style="background-image: url('https://p3-flow-imagex-sign.byteimg.com/user-avatar/922992e234f7d91158257ff75a80b929~tplv-a9rns2rl98-image.jpeg?rk3s=98c978ad&x-expires=1747813421&x-signature=NSb6OXoev03Md5PmGKvqV3RGk0o%3D');"></div>
-            <div class="tweet-content">
-                <div class="tweet-header"><span class="tweet-name">朱重八</span><span class="tweet-username">@No.8</span><span class="tweet-time">· 康熙二十五年</span></div>
-                <div class="tweet-text">有没有什么攒劲的节目？#九族消消乐</div>
-                <div class="tweet-actions">
-                    <div class="tweet-action"><i class="far fa-comment"></i><span>42</span></div>
-                    <div class="tweet-action"><i class="fas fa-retweet"></i><span>87</span></div>
-                    <div class="tweet-action"><i class="far fa-heart"></i><span>324</span></div>
-                    <div class="tweet-action"><i class="fas fa-share"></i></div>
+    
+    <div class="content">
+        <div class="content-container">
+            <div class="content-header">
+                <h1 class="content-title">推荐内容</h1>
+                <div class="content-filters">
+                    <button class="filter-button active">全部</button>
+                    <button class="filter-button">最新</button>
+                    <button class="filter-button">热门</button>
+                    <button class="filter-button">收藏</button>
                 </div>
             </div>
-        </div>
-        <div class="tweet">
-            <div class="avatar" style="background-image: url('https://p3-flow-imagex-sign.byteimg.com/user-avatar/4e70c9ab15360c52c94d7f04d103da0b~tplv-a9rns2rl98-icon-tiny.jpeg?rk3s=98c978ad&x-expires=1747813207&x-signature=zmomZTrzxI0uuPNrf5i49m%2BC2bw%3D');"></div>
-            <div class="tweet-content">
-                <div class="tweet-header"><span class="tweet-name">爱新觉罗·弘历</span><span class="tweet-username">@lilybaby</span><span class="tweet-time">· 民国三十八年</span></div>
-                <div class="tweet-text">好想反清复明啊 #热烈庆祝新中国成立60周年</div>
-                <div class="tweet-actions">
-                    <div class="tweet-action"><i class="far fa-comment"></i><span>24</span></div>
-                    <div class="tweet-action"><i class="fas fa-retweet"></i><span>12</span></div>
-                    <div class="tweet-action"><i class="far fa-heart"></i><span>156</span></div>
-                    <div class="tweet-action"><i class="fas fa-share"></i></div>
+            <div class="content-grid">
+                <div class="content-card">
+                    <img src="https://public.ysjf.com/content/title-image/%E5%8A%A8%E7%89%A9-%E9%A9%AF%E9%B9%BF%E9%83%A8%E8%90%BD-05-%E5%85%A8%E6%99%AF.jpg" alt="Image 1" class="card-image">
+                    <div class="card-content">
+                        <h3 class="card-title">驯鹿部落全景展示</h3>
+                        <div class="card-meta">
+                            <span>YSJF</span>
+                            <span>1.2万观看</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-card">
+                    <img src="https://public.ysjf.com/content/title-image/%E5%8A%A8%E7%89%A9-%E9%A9%AF%E9%B9%BF%E9%83%A8%E8%90%BD-05-%E5%85%A8%E6%99%AF.jpg" alt="Image 2" class="card-image">
+                    <div class="card-content">
+                        <h3 class="card-title">野生动物摄影技巧分享</h3>
+                        <div class="card-meta">
+                            <span>自然摄影</span>
+                            <span>8千观看</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-card">
+                    <img src="https://public.ysjf.com/content/title-image/%E5%8A%A8%E7%89%A9-%E9%A9%AF%E9%B9%BF%E9%83%A8%E8%90%BD-05-%E5%85%A8%E6%99%AF.jpg" alt="Image 3" class="card-image">
+                    <div class="card-content">
+                        <h3 class="card-title">北方森林探险日记 - 第一季合集</h3>
+                        <div class="card-meta">
+                            <span>探险家</span>
+                            <span>3.5万观看</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-card">
+                    <img src="https://public.ysjf.com/content/title-image/%E5%8A%A8%E7%89%A9-%E9%A9%AF%E9%B9%BF%E9%83%A8%E8%90%BD-05-%E5%85%A8%E6%99%AF.jpg" alt="Image 4" class="card-image">
+                    <div class="card-content">
+                        <h3 class="card-title">驯鹿文化与传统生活方式</h3>
+                        <div class="card-meta">
+                            <span>文化探索</span>
+                            <span>1.8万观看</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-card">
+                    <img src="https://public.ysjf.com/content/title-image/%E5%8A%A8%E7%89%A9-%E9%A9%AF%E9%B9%BF%E9%83%A8%E8%90%BD-05-%E5%85%A8%E6%99%AF.jpg" alt="Image 5" class="card-image">
+                    <div class="card-content">
+                        <h3 class="card-title">极地风光摄影大赛获奖作品展示</h3>
+                        <div class="card-meta">
+                            <span>摄影艺术</span>
+                            <span>5.6万观看</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-card">
+                    <img src="https://public.ysjf.com/content/title-image/%E5%8A%A8%E7%89%A9-%E9%A9%AF%E9%B9%BF%E9%83%A8%E8%90%BD-05-%E5%85%A8%E6%99%AF.jpg" alt="Image 6" class="card-image">
+                    <div class="card-content">
+                        <h3 class="card-title">野生动物保护现状与未来</h3>
+                        <div class="card-meta">
+                            <span>环保组织</span>
+                            <span>2.3万观看</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="right-sidebar">
-        <div class="search-box">
-            <i class="fas fa-search" style="color:var(--sec-text);"></i>
-            <input type="text" class="search-input" placeholder="搜索你不爱看的">
-        </div>
-        <div class="contact-box">
-            <div class="contact-header">联系方式</div>
-            <div class="contact-item">
-                <div class="contact-icon"><i class="fas fa-user"></i></div>
-                <div class="contact-info">
-                    <div class="contact-name">我的信息</div>
-                    <div class="contact-detail">国家安全局</div>
-                </div>
+    
+    <div class="bottom-nav" id="bottomNav">
+        <div class="bottom-nav-items">
+            <div class="bottom-nav-item active" data-section="home">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path>
+                </svg>
+                <span>首页</span>
             </div>
-            <div class="contact-item">
-                <div class="contact-icon"><i class="fas fa-envelope"></i></div>
-                <div class="contact-info">
-                    <div class="contact-name">邮箱</div>
-                    <div class="contact-detail">Hi@yaliu.com</div>
-                </div>
+            <div class="bottom-nav-item" data-section="explore">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M10 14.65v-5.3L15 12l-5 2.65zm7.77-4.33c-.77-.32-1.2-.5-1.2-.5L18 9.06c1.84-.96 2.53-3.23 1.56-5.06s-3.24-2.53-5.07-1.56L6 6.94c-1.29.68-2.07 2.04-2 3.49.07 1.42.93 2.67 2.22 3.25.03.01 1.2.5 1.2.5L6 14.93c-1.83.97-2.53 3.24-1.56 5.07.97 1.83 3.24 2.53 5.07 1.56l8.5-4.5c1.29-.68 2.06-2.04 1.99-3.49-.07-1.42-.94-2.68-2.23-3.25zm-.23 5.86l-8.5 4.5c-1.34.71-3.01.2-3.72-1.14-.71-1.34-.2-3.01 1.14-3.72l2.04-1.08v-1.21l-.69-.28-1.11-.46c-.99-.41-1.65-1.35-1.7-2.41-.05-1.06.52-2.06 1.46-2.56l8.5-4.5c1.34-.71 3.01-.2 3.72 1.14.71 1.34.2 3.01-1.14 3.72L15.5 9.26v1.21l1.8.74c.99.41 1.65 1.35 1.7 2.41.05 1.06-.52 2.06-1.46 2.56z"></path>
+                </svg>
+                <span>探索</span>
             </div>
-            <div class="contact-item">
-                <div class="contact-icon"><i class="fab fa-weixin"></i></div>
-                <div class="contact-info">
-                    <div class="contact-name">微信</div>
-                    <div class="contact-detail">yaliuz</div>
-                </div>
+            <div class="bottom-nav-item" data-section="subscriptions">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 3.67c-4.58 0-8.33 3.75-8.33 8.33s3.75 8.33 8.33 8.33 8.33-3.75 8.33-8.33S16.58 3.67 12 3.67zm0 15c-3.68 0-6.67-2.99-6.67-6.67S8.32 5.33 12 5.33s6.67 2.99 6.67 6.67-2.99 6.67-6.67 6.67zm1-11.67h-1v5l3.9 2.34.6-.92-3.5-2.08V7z"></path>
+                </svg>
+                <span>订阅</span>
+            </div>
+            <div class="bottom-nav-item" data-section="menu">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"></path>
+                </svg>
+                <span>菜单</span>
             </div>
         </div>
     </div>
+    
     <script>
-        const navItems = document.querySelectorAll('.nav-item');
-        const logo = document.querySelector('.logo');
-        const searchBox = document.querySelector('.search-box');
-        const contactBox = document.querySelector('.contact-box');
-        let currentIndex = 0;
-        let isAnimating = false;
-        const animationDuration = 300;
+        const body = document.body;
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const themeToggle = document.getElementById('themeToggle');
+        const userMenuToggle = document.getElementById('userMenuToggle');
+        const userMenu = document.getElementById('userMenu');
+        const bottomNav = document.getElementById('bottomNav');
+        const bottomNavItems = document.querySelectorAll('.bottom-nav-item');
+        const filterButtons = document.querySelectorAll('.filter-button');
+        const menuItems = document.querySelectorAll('.sidebar-item');
 
-        // 初始化状态
-        resetRightSidebar();
+        const currentTheme = localStorage.getItem('theme');
+        if (currentTheme === 'light') {
+            body.classList.add('light-theme');
+        }
 
-        // 为导航项添加事件监听
-        navItems.forEach(item => {
-            item.addEventListener('click', handleNavClick);
-            item.addEventListener('mouseenter', handleNavHover);
+        let sidebarExpanded = true;
+        let isMouseOverSidebar = false;
+
+        // Auto-collapse sidebar on desktop
+        window.addEventListener('load', () => {
+            if (window.innerWidth > 768) {
+                setTimeout(() => {
+                    if (!isMouseOverSidebar) {
+                        sidebar.classList.add('collapsed');
+                        sidebarExpanded = false;
+                    }
+                }, 2000);
+            }
         });
 
-        // 鼠标移出侧边栏时恢复默认状态
-        document.querySelector('.sidebar').addEventListener('mouseleave', resetRightSidebar);
-
-        function handleNavClick() {
-            if (isAnimating) return;
-            
-            const target = this.dataset.target;
-            handleNavAction(target);
-            
-            // 更新active状态
-            navItems.forEach(item => item.classList.remove('active'));
-            this.classList.add('active');
-        }
-
-        function handleNavHover() {
-            if (isAnimating) return;
-            
-            const target = this.dataset.target;
-            handleNavAction(target);
-        }
-
-        function handleNavAction(target) {
-            isAnimating = true;
-            
-            // 重置所有效果
-            resetRightSidebar();
-            
-            // 根据目标添加相应效果
-            if (target === 'explore') {
-                searchBox.classList.add('expanded');
-                contactBox.classList.add('collapsed');
-            } else if (target === 'messages') {
-                contactBox.classList.add('expanded');
-                searchBox.classList.remove('expanded');
+        function checkScreenSize() {
+            if (window.innerWidth <= 768) {
+                sidebar.classList.remove('collapsed');
+                sidebar.classList.remove('visible');
+                overlay.classList.remove('visible');
+                sidebarExpanded = false;
             } else {
-                resetRightSidebar();
+                sidebar.classList.add('visible');
+                sidebarExpanded = true;
             }
-            
-            setTimeout(() => {
-                isAnimating = false;
-            }, animationDuration);
         }
 
-        function resetRightSidebar() {
-            searchBox.classList.remove('expanded');
-            contactBox.classList.remove('expanded', 'collapsed');
-        }
+        checkScreenSize();
+        window.addEventListener('resize', checkScreenSize);
 
-        window.addEventListener('wheel', (event) => {
-            if (isAnimating) return;
+        // Theme toggle
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('light-theme');
+            const theme = body.classList.contains('light-theme') ? 'light' : 'dark';
+            localStorage.setItem('theme', theme);
+        });
 
-            logo.style.backgroundImage = "url('https://www.ysjf.com/assets/ysjf_active@2x-BTnDL7hV.png')";
-            setTimeout(() => {
-                logo.style.backgroundImage = "url('https://www.ysjf.com/assets/ysjf@2x-DcH_D2DE.png')";
-            }, 500);
-
-            if (event.deltaY > 0) {
-                currentIndex = (currentIndex + 1) % navItems.length;
-            } else {
-                currentIndex = (currentIndex - 1 + navItems.length) % navItems.length;
+        // Sidebar hover for desktop
+        sidebar.addEventListener('mouseenter', () => {
+            if (window.innerWidth > 768) {
+                sidebar.classList.remove('collapsed');
+                sidebarExpanded = true;
+                isMouseOverSidebar = true;
             }
+        });
 
-            isAnimating = true;
+        sidebar.addEventListener('mouseleave', () => {
+            if (window.innerWidth > 768) {
+                sidebar.classList.add('collapsed');
+                sidebarExpanded = false;
+                isMouseOverSidebar = false;
+            }
+        });
 
-            navItems.forEach((item) => {
-                item.classList.remove('active');
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('visible');
+            overlay.classList.remove('visible');
+        });
+
+        // User menu toggle
+        userMenuToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            userMenu.classList.toggle('active');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!userMenu.contains(e.target) && !userMenuToggle.contains(e.target)) {
+                userMenu.classList.remove('active');
+            }
+        });
+
+        // Sidebar and bottom nav interactions
+        menuItems.forEach(item => {
+            item.addEventListener('click', function() {
+                menuItems.forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.remove('visible');
+                    overlay.classList.remove('visible');
+                }
             });
+        });
 
-            const activeItem = navItems[currentIndex];
-            activeItem.classList.add('active');
-            
-            // 触发对应导航项的效果
-            const target = activeItem.dataset.target;
-            handleNavAction(target);
+        bottomNavItems.forEach(item => {
+            item.addEventListener('click', function() {
+                bottomNavItems.forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                if (this.dataset.section === 'menu') {
+                    sidebar.classList.add('visible');
+                    overlay.classList.add('visible');
+                    bottomNav.classList.remove('hidden');
+                } else {
+                    sidebar.classList.remove('visible');
+                    overlay.classList.remove('visible');
+                }
+            });
+        });
 
-            setTimeout(() => {
-                isAnimating = false;
-            }, animationDuration);
+        // Filter buttons
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Scroll-based hiding for bottom nav on mobile with debouncing
+        let lastScrollTop = 0;
+        let scrollTimeout;
+
+        window.addEventListener('scroll', () => {
+            if (window.innerWidth <= 768) {
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(() => {
+                    const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                    if (currentScrollTop > lastScrollTop) {
+                        bottomNav.classList.add('hidden');
+                    } else {
+                        bottomNav.classList.remove('hidden');
+                    }
+                    lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop;
+                }, 50);
+            }
         });
     </script>
 </body>
-</html>
-    
+</html>  
