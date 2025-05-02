@@ -332,11 +332,26 @@
             flex-grow: 1;
             padding: 20px;
             margin-left: var(--sidebar-width);
-            transition: margin-left var(--transition-speed) ease;
-            will-change: margin-left;
+            transition: margin-left var(--transition-speed) ease, transform var(--transition-speed) ease, width var(--transition-speed) ease;
+            will-change: margin-left, transform, width;
             transform: translateZ(0);
             backface-visibility: hidden;
             perspective: 1000px;
+        }
+
+        .sidebar.collapsed ~ .content {
+            margin-left: var(--sidebar-collapsed-width);
+        }
+
+        /* Folding effect when sidebar is expanded on desktop */
+        @media (min-width: 769px) {
+            .sidebar:not(.collapsed) ~ .content {
+                transform: scale(0.85);
+                transform-origin: left top;
+                width: calc(100% - var(--sidebar-width));
+                margin-left: var(--sidebar-width);
+                opacity: 0.9;
+            }
         }
 
         /* Enhanced text visibility in dark mode with frosted glass effect */
@@ -396,10 +411,6 @@
                 transform: translateY(-5px) !important;
                 z-index: 4 !important;
             }
-        }
-
-        .sidebar.collapsed ~ .content {
-            margin-left: var(--sidebar-collapsed-width);
         }
 
         .content-container {
@@ -658,6 +669,8 @@
                 padding: 16px;
                 padding-top: calc(var(--header-height) + 16px);
                 padding-bottom: 80px;
+                transform: none !important;
+                width: 100% !important;
             }
 
             .slider-container {
@@ -681,7 +694,16 @@
             }
 
             .content-grid {
-                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+
+            .content-card {
+                min-width: 0;
+            }
+
+            .card-image {
+                height: 140px;
             }
         }
 
@@ -948,6 +970,7 @@
         const slider = document.getElementById('slider');
         const sliderDots = document.querySelectorAll('.slider-dot');
         const settingsToggle = document.querySelector('.theme-toggle-item');
+        const content = document.querySelector('.content');
 
         // Initialize theme and icons
         const currentTheme = localStorage.getItem('theme') || 'dark';
@@ -974,15 +997,10 @@
 
         // Theme toggle function
         function toggleTheme(element) {
-            // 立即切换主题
             body.classList.toggle('light-theme');
             const theme = body.classList.contains('light-theme') ? 'light' : 'dark';
             localStorage.setItem('theme', theme);
-            
-            // 更新图标
             themeToggle.querySelector('img').src = themeIcons[theme];
-            
-            // 如果是头部切换按钮，执行旋转动画
             if (element === themeToggle) {
                 themeToggle.classList.add('rotate');
                 setTimeout(() => {
@@ -1080,6 +1098,7 @@
                     if (!isMouseOverSidebar) {
                         sidebar.classList.add('collapsed');
                         sidebarExpanded = false;
+                        content.classList.remove('content-folded');
                     }
                 }, 2000);
             }
@@ -1094,6 +1113,7 @@
                 overlay.classList.remove('visible');
                 sidebarExpanded = false;
                 isMenuOpen = false;
+                content.classList.remove('content-folded');
             } else {
                 sidebar.classList.add('visible');
                 sidebarExpanded = true;
@@ -1109,6 +1129,7 @@
                 sidebar.classList.remove('collapsed');
                 sidebarExpanded = true;
                 isMouseOverSidebar = true;
+                content.classList.add('content-folded');
             }
         });
 
@@ -1117,6 +1138,7 @@
                 sidebar.classList.add('collapsed');
                 sidebarExpanded = false;
                 isMouseOverSidebar = false;
+                content.classList.remove('content-folded');
             }
         });
 
