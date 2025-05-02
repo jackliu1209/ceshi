@@ -26,13 +26,14 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Oxygen, Ubuntu, Cantarell, sans-serif;
+            -webkit-tap-highlight-color: transparent; /* 移除移动端点击高亮 */
         }
 
         body {
             background-color: var(--dark-bg);
             color: var(--dark-text);
             transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
-            overscroll-behavior-y: contain; /* 防止页面整体滚动 */
+            overscroll-behavior-y: contain;
         }
 
         body.light-theme {
@@ -205,7 +206,7 @@
             transition: width var(--transition-speed) ease, transform var(--transition-speed) ease;
             transform: translateX(0);
             will-change: width, transform;
-            -webkit-overflow-scrolling: touch; /* 平滑滚动 */
+            -webkit-overflow-scrolling: touch;
         }
 
         body.light-theme .sidebar {
@@ -259,6 +260,7 @@
             cursor: pointer;
             overflow: hidden;
             transition: all var(--transition-speed) ease;
+            position: relative;
         }
 
         .sidebar-item:hover {
@@ -297,6 +299,27 @@
             transition: opacity var(--transition-speed) ease;
         }
 
+        /* 修复移动端点击残留效果 */
+        .sidebar-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: transparent;
+            transition: background-color 0.2s ease;
+            pointer-events: none;
+        }
+
+        .sidebar-item:active::after {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        body.light-theme .sidebar-item:active::after {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
         .content {
             flex-grow: 1;
             padding: 20px;
@@ -304,6 +327,43 @@
             transition: margin-left var(--transition-speed) ease;
             will-change: margin-left;
             transform: translateZ(0);
+        }
+
+        /* 桌面端侧边栏展开时的内容层叠效果 */
+        @media (min-width: 769px) {
+            .content-grid {
+                perspective: 1000px;
+            }
+            
+            .content-card {
+                transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease, z-index 0s linear var(--transition-speed);
+                position: relative;
+                z-index: 1;
+            }
+            
+            .sidebar:not(.collapsed) ~ .content .content-card {
+                transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease, z-index 0s linear;
+            }
+            
+            .sidebar:not(.collapsed) ~ .content .content-card:nth-child(3n+1) {
+                transform: translateX(10px) translateY(5px);
+                z-index: 3;
+            }
+            
+            .sidebar:not(.collapsed) ~ .content .content-card:nth-child(3n+2) {
+                transform: translateX(5px) translateY(3px);
+                z-index: 2;
+            }
+            
+            .sidebar:not(.collapsed) ~ .content .content-card:nth-child(3n+3) {
+                transform: translateX(0) translateY(0);
+                z-index: 1;
+            }
+            
+            .sidebar:not(.collapsed) ~ .content .content-card:hover {
+                transform: translateY(-5px) !important;
+                z-index: 4 !important;
+            }
         }
 
         .sidebar.collapsed ~ .content {
@@ -358,6 +418,56 @@
         .filter-button.active {
             background-color: var(--primary-color);
             color: white;
+        }
+
+        /* 移动端幻灯片 */
+        .slider-container {
+            display: none;
+            width: 100%;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .slider {
+            display: flex;
+            transition: transform 0.5s ease;
+            height: 160px;
+        }
+
+        .slide {
+            min-width: 100%;
+            height: 100%;
+        }
+
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .slider-dots {
+            position: absolute;
+            bottom: 10px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .slider-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .slider-dot.active {
+            background-color: var(--primary-color);
         }
 
         .content-grid {
@@ -424,7 +534,7 @@
             height: 60px;
             z-index: 1000;
             box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.2);
-            transition: transform 0.2s ease;
+            transition: transform 0.15s ease-out; /* 更快的过渡 */
         }
 
         body.light-theme .bottom-nav {
@@ -510,8 +620,12 @@
             .content {
                 margin-left: 0;
                 padding: 16px;
-                padding-top: calc(var(--header-height) + 56px);
+                padding-top: calc(var(--header-height) + 16px);
                 padding-bottom: 80px;
+            }
+
+            .slider-container {
+                display: block;
             }
 
             .bottom-nav {
@@ -641,7 +755,7 @@
             <div class="sidebar-item">
                 <div class="sidebar-item-icon">
                     <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-                        <path d="M14.97 16.95L10 13.87V7h2v5.76l4.03 2.49-1.06 1.7zM12 3c-4.96 0-9 4.04-9 9s4.04 9 9 9 9-4.04 9-9-4.04-9-9-9m0-1c5.52 0 10 4.48 10 10s-4.48 10-10 10S2 17.52 2 12 6.48 2 12 2z"></path>
+                        <path d="M14.97 16.95L10 13.87V7h2v5.76l4.03 2.49-1.06 1.7zM12 3c-4.96 0-9 4.04-9 9s4.04 9 9 9 9-4.04 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"></path>
                     </svg>
                 </div>
                 <div class="sidebar-item-text">历史记录</div>
@@ -691,6 +805,26 @@
     
     <div class="content">
         <div class="content-container">
+            <!-- 移动端幻灯片 -->
+            <div class="slider-container" id="sliderContainer">
+                <div class="slider" id="slider">
+                    <div class="slide">
+                        <img src="https://public.ysjf.com/content/title-image/%E5%8A%A8%E7%89%A9-%E9%A9%AF%E9%B9%BF%E9%83%A8%E8%90%BD-05-%E5%85%A8%E6%99%AF.jpg" alt="Slide 1">
+                    </div>
+                    <div class="slide">
+                        <img src="https://public.ysjf.com/content/title-image/%E5%8A%A8%E7%89%A9-%E9%A9%AF%E9%B9%BF%E9%83%A8%E8%90%BD-05-%E5%85%A8%E6%99%AF.jpg" alt="Slide 2">
+                    </div>
+                    <div class="slide">
+                        <img src="https://public.ysjf.com/content/title-image/%E5%8A%A8%E7%89%A9-%E9%A9%AF%E9%B9%BF%E9%83%A8%E8%90%BD-05-%E5%85%A8%E6%99%AF.jpg" alt="Slide 3">
+                    </div>
+                </div>
+                <div class="slider-dots">
+                    <div class="slider-dot active" data-index="0"></div>
+                    <div class="slider-dot" data-index="1"></div>
+                    <div class="slider-dot" data-index="2"></div>
+                </div>
+            </div>
+            
             <div class="content-header">
                 <h1 class="content-title">推荐内容</h1>
                 <div class="content-filters">
@@ -805,6 +939,9 @@
         const bottomNavItems = document.querySelectorAll('.bottom-nav-item');
         const filterButtons = document.querySelectorAll('.filter-button');
         const menuItems = document.querySelectorAll('.sidebar-item');
+        const sliderContainer = document.getElementById('sliderContainer');
+        const slider = document.getElementById('slider');
+        const sliderDots = document.querySelectorAll('.slider-dot');
 
         const currentTheme = localStorage.getItem('theme');
         if (currentTheme === 'light') {
@@ -813,8 +950,78 @@
 
         let sidebarExpanded = true;
         let isMouseOverSidebar = false;
-        let isMenuOpen = false; // 添加菜单状态变量
+        let isMenuOpen = false;
         let lastScrollPosition = 0;
+        let currentSlide = 0;
+        let slideInterval;
+
+        // 初始化幻灯片
+        function initSlider() {
+            if (window.innerWidth > 768) return;
+            
+            // 自动轮播
+            slideInterval = setInterval(() => {
+                currentSlide = (currentSlide + 1) % 3;
+                updateSlider();
+            }, 3000);
+            
+            // 点按切换
+            sliderDots.forEach(dot => {
+                dot.addEventListener('click', function() {
+                    currentSlide = parseInt(this.dataset.index);
+                    updateSlider();
+                    resetSlideInterval();
+                });
+            });
+            
+            // 触摸滑动
+            let touchStartX = 0;
+            let touchEndX = 0;
+            
+            slider.addEventListener('touchstart', e => {
+                touchStartX = e.changedTouches[0].screenX;
+                resetSlideInterval();
+            }, { passive: true });
+            
+            slider.addEventListener('touchend', e => {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            }, { passive: true });
+        }
+        
+        function handleSwipe() {
+            const threshold = 50;
+            
+            if (touchEndX < touchStartX - threshold) {
+                // 向左滑动 - 下一张
+                currentSlide = (currentSlide + 1) % 3;
+                updateSlider();
+            } else if (touchEndX > touchStartX + threshold) {
+                // 向右滑动 - 上一张
+                currentSlide = (currentSlide - 1 + 3) % 3;
+                updateSlider();
+            }
+        }
+        
+        function updateSlider() {
+            slider.style.transform = `translateX(-${currentSlide * 100}%)`;
+            
+            sliderDots.forEach((dot, index) => {
+                if (index === currentSlide) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+        
+        function resetSlideInterval() {
+            clearInterval(slideInterval);
+            slideInterval = setInterval(() => {
+                currentSlide = (currentSlide + 1) % 3;
+                updateSlider();
+            }, 3000);
+        }
 
         // Auto-collapse sidebar on desktop
         window.addEventListener('load', () => {
@@ -826,6 +1033,9 @@
                     }
                 }, 2000);
             }
+            
+            // 初始化幻灯片
+            initSlider();
         });
 
         function checkScreenSize() {
@@ -906,7 +1116,7 @@
                 this.classList.add('active');
                 
                 if (this.dataset.section === 'menu') {
-                    isMenuOpen = !isMenuOpen; // 切换菜单状态
+                    isMenuOpen = !isMenuOpen;
                     if (isMenuOpen) {
                         sidebar.classList.add('visible');
                         overlay.classList.add('visible');
@@ -941,8 +1151,8 @@
             if (currentScrollPosition > lastScrollPosition && currentScrollPosition > 50) {
                 bottomNav.classList.add('hidden');
             } 
-            // 向上滚动或接近顶部时显示底部导航栏
-            else if (currentScrollPosition < lastScrollPosition || currentScrollPosition < 50) {
+            // 向上滚动或接近顶部时立即显示底部导航栏
+            else {
                 bottomNav.classList.remove('hidden');
             }
             
@@ -951,14 +1161,12 @@
 
         // 修复侧边栏滚动问题
         sidebar.addEventListener('touchstart', function(e) {
-            // 如果内容可以滚动，则阻止事件冒泡
             if (this.scrollHeight > this.clientHeight) {
                 e.stopPropagation();
             }
         }, { passive: true });
 
         sidebar.addEventListener('touchmove', function(e) {
-            // 如果内容可以滚动，则阻止事件冒泡
             if (this.scrollHeight > this.clientHeight) {
                 e.stopPropagation();
             }
