@@ -822,7 +822,7 @@
                         <img src="https://public.ysjf.com/content/title-image/%E5%8A%A8%E7%89%A9-%E9%A9%AF%E9%B9%BF%E9%83%A8%E8%90%BD-05-%E5%85%A8%E6%99%AF.jpg" alt="Slide 2">
                     </div>
                     <div class="slide">
-                        <img src="https://public.ysjf.com/assets/ysjf_active@2x-BTnDL7hV.png" alt="Slide 3">
+                        <img src="https://public.ysjf.com/content/title-image/%E5%8A%A8%E7%89%A9-%E9%A9%AF%E9%B9%BF%E9%83%A8%E8%90%BD-05-%E5%85%A8%E6%99%AF.jpg" alt="Slide 3">
                     </div>
                 </div>
                 <div class="slider-dots">
@@ -974,22 +974,21 @@
 
         // Theme toggle function
         function toggleTheme(element) {
+            // 立即切换主题
+            body.classList.toggle('light-theme');
+            const theme = body.classList.contains('light-theme') ? 'light' : 'dark';
+            localStorage.setItem('theme', theme);
+            
+            // 更新图标
+            themeToggle.querySelector('img').src = themeIcons[theme];
+            
+            // 如果是头部切换按钮，执行旋转动画
             if (element === themeToggle) {
                 themeToggle.classList.add('rotate');
-            }
-            
-            setTimeout(() => {
-                body.classList.toggle('light-theme');
-                const theme = body.classList.contains('light-theme') ? 'light' : 'dark';
-                localStorage.setItem('theme', theme);
-                
-                // Update header toggle icon
-                themeToggle.querySelector('img').src = themeIcons[theme];
-                
-                if (element === themeToggle) {
+                setTimeout(() => {
                     themeToggle.classList.remove('rotate');
-                }
-            }, 500);
+                }, 500);
+            }
         }
 
         // Theme toggle handlers
@@ -1003,7 +1002,6 @@
             if (window.innerWidth > 768) return;
             
             slideInterval = setInterval(() => {
-                // Random slide selection, ensuring it's different from current
                 let nextSlide;
                 do {
                     nextSlide = Math.floor(Math.random() * 3);
