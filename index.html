@@ -26,7 +26,7 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Oxygen, Ubuntu, Cantarell, sans-serif;
-            -webkit-tap-highlight-color: transparent; /* 移除移动端点击高亮 */
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -77,7 +77,7 @@
             padding: 8px;
             cursor: pointer;
             border-radius: 50%;
-            transition: background-color var(--transition-speed) ease, transform 0.2s ease;
+            transition: all var(--transition-speed) ease;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -85,7 +85,6 @@
 
         .theme-toggle:hover {
             background-color: var(--dark-hover);
-            transform: scale(1.1);
         }
 
         body.light-theme .theme-toggle:hover {
@@ -96,9 +95,14 @@
             transform: scale(0.95);
         }
 
-        .theme-toggle svg {
+        .theme-toggle img {
             width: 24px;
             height: 24px;
+            transition: transform 0.5s ease;
+        }
+
+        .theme-toggle.rotate img {
+            transform: rotate(360deg);
         }
 
         .user-controls {
@@ -207,6 +211,7 @@
             transform: translateX(0);
             will-change: width, transform;
             -webkit-overflow-scrolling: touch;
+            transform: translateZ(0);
         }
 
         body.light-theme .sidebar {
@@ -299,7 +304,6 @@
             transition: opacity var(--transition-speed) ease;
         }
 
-        /* 修复移动端点击残留效果 */
         .sidebar-item::after {
             content: '';
             position: absolute;
@@ -327,22 +331,28 @@
             transition: margin-left var(--transition-speed) ease;
             will-change: margin-left;
             transform: translateZ(0);
+            backface-visibility: hidden;
+            perspective: 1000px;
         }
 
-        /* 桌面端侧边栏展开时的内容层叠效果 */
+        /* 优化桌面端侧边栏展开时的内容动画 */
         @media (min-width: 769px) {
             .content-grid {
                 perspective: 1000px;
+                transform-style: preserve-3d;
             }
             
             .content-card {
-                transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease, z-index 0s linear var(--transition-speed);
+                transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
                 position: relative;
                 z-index: 1;
+                transform-style: preserve-3d;
+                backface-visibility: hidden;
+                will-change: transform;
             }
             
             .sidebar:not(.collapsed) ~ .content .content-card {
-                transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease, z-index 0s linear;
+                transition: transform 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28), box-shadow 0.4s ease;
             }
             
             .sidebar:not(.collapsed) ~ .content .content-card:nth-child(3n+1) {
@@ -420,7 +430,7 @@
             color: white;
         }
 
-        /* 移动端幻灯片 */
+        /* 优化移动端幻灯片 */
         .slider-container {
             display: none;
             width: 100%;
@@ -428,23 +438,28 @@
             border-radius: 8px;
             overflow: hidden;
             position: relative;
+            touch-action: pan-y;
         }
 
         .slider {
             display: flex;
-            transition: transform 0.5s ease;
+            transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             height: 160px;
+            width: 100%;
+            will-change: transform;
         }
 
         .slide {
             min-width: 100%;
             height: 100%;
+            flex-shrink: 0;
         }
 
         .slide img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            pointer-events: none;
         }
 
         .slider-dots {
@@ -534,7 +549,7 @@
             height: 60px;
             z-index: 1000;
             box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.2);
-            transition: transform 0.15s ease-out; /* 更快的过渡 */
+            transition: transform 0.15s ease-out;
         }
 
         body.light-theme .bottom-nav {
@@ -692,24 +707,12 @@
     <header>
         <div class="logo-container">
             <div class="theme-toggle" id="themeToggle">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"></path>
-                </svg>
+                <img src="https://www.ysjf.com/assets/ysjf@2x-DcH_D2DE.png" alt="Theme toggle">
             </div>
             <img src="hv" alt="Logo" class="logo">
         </div>
         
         <div class="user-controls">
-            <div class="control-icon" id="userMenuToggle">
-                <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
-                </svg>
-            </div>
-            <div class="dropdown-menu" id="userMenu">
-                <div class="dropdown-item" onclick="alert('View Profile')">查看个人资料</div>
-                <div class="dropdown-item" onclick="alert('Open Settings')">设置</div>
-                <div class="dropdown-item" onclick="alert('Logging out...')">退出登录</div>
-            </div>
             <img src="https://thirdwx.qlogo.cn/mmopen/vi_32/FmXo0ZgeSGcMnUbiaxJxZe4IbMO8uVpho2u4QYEWN3FibxkbrfWkEXFGNGmtyhouaCYsdY2jjrBibibXlQ1iaJgxKErfHF9vl6BxcHiaYBCiageneU/132" alt="User Avatar" class="user-avatar">
         </div>
     </header>
@@ -752,14 +755,6 @@
                 </div>
                 <div class="sidebar-item-text">媒体库</div>
             </div>
-            <div class="sidebar-item">
-                <div class="sidebar-item-icon">
-                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-                        <path d="M14.97 16.95L10 13.87V7h2v5.76l4.03 2.49-1.06 1.7zM12 3c-4.96 0-9 4.04-9 9s4.04 9 9 9 9-4.04 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"></path>
-                    </svg>
-                </div>
-                <div class="sidebar-item-text">历史记录</div>
-            </div>
         </div>
         
         <div class="sidebar-section">
@@ -768,17 +763,10 @@
                 <div class="sidebar-item-icon">
                     <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
                         <path d="M12 3.67c-4.58 0-8.33 3.75-8.33 8.33s3.75 8.33 8.33 8.33 8.33-3.75 8.33-8.33S16.58 3.67 12 3.67zm0 15c-3.68 0-6.67-2.99-6.67-6.67S8.32 5.33 12 5.33s6.67 2.99 6.67 6.67-2.99 6.67-6.67 6.67zm1-11.67h-1v5l3.9 2.34.6-.92-3.5-2.08V7z"></path>
+
                     </svg>
                 </div>
                 <div class="sidebar-item-text">您的视频</div>
-            </div>
-            <div class="sidebar-item">
-                <div class="sidebar-item-icon">
-                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-                        <path d="M18.77 11h-4.23l1.52-4.94C16.38 5.03 15.54 4 14.38 4c-.58 0-1.14.24-1.52.65L7 11H3v10h4v-9.65l1-1.27 4.58 6.02c.34.44.85.68 1.4.68h6.67c1.03 0 1.98-.79 1.98-1.81l.63-4.47c.1-.7-.37-1.37-1.07-1.58zM7 15H5v-2h2v2zm-2 4v-2h2v2H5zm12 0h-4v-2h4v2zm0-4h-4v-2h4v2z"></path>
-                    </svg>
-                </div>
-                <div class="sidebar-item-text">喜欢的内容</div>
             </div>
         </div>
         
@@ -815,7 +803,7 @@
                         <img src="https://public.ysjf.com/content/title-image/%E5%8A%A8%E7%89%A9-%E9%A9%AF%E9%B9%BF%E9%83%A8%E8%90%BD-05-%E5%85%A8%E6%99%AF.jpg" alt="Slide 2">
                     </div>
                     <div class="slide">
-                        <img src="https://public.ysjf.com/content/title-image/%E5%8A%A8%E7%89%A9-%E9%A9%AF%E9%B9%BF%E9%83%A8%E8%90%BD-05-%E5%85%A8%E6%99%AF.jpg" alt="Slide 3">
+                        <img src="https://public.ysjf.com/assets/ysjf_active@2x-BTnDL7hV.png" alt="Slide 3">
                     </div>
                 </div>
                 <div class="slider-dots">
@@ -915,7 +903,7 @@
             </div>
             <div class="bottom-nav-item" data-section="subscriptions">
                 <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 3.67c-4.58 0-8.33 3.75-8.33 8.33s3.75 8.33 8.33 8.33 8.33-3.75 8.33-8.33S16.58 3.67 12 3.67zm0 15c-3.68 0-6.67-2.99-6.67-6.67S8.32 5.33 12 5.33s6.67 2.99 6.67 6.67-2.99 6.67-6.67 6.67zm1-11.67h-1v5l3.9 2.34.6-.92-3.5-2.08V7z"></path>
+                    <path d="M12 3.67c-4.58 0-8.33 3.75-8.33 8.33s3.75 8.33 8.33 8.33 8.33-3.75 8.33-8.33c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"></path>
                 </svg>
                 <span>订阅</span>
             </div>
@@ -933,8 +921,6 @@
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('overlay');
         const themeToggle = document.getElementById('themeToggle');
-        const userMenuToggle = document.getElementById('userMenuToggle');
-        const userMenu = document.getElementById('userMenu');
         const bottomNav = document.getElementById('bottomNav');
         const bottomNavItems = document.querySelectorAll('.bottom-nav-item');
         const filterButtons = document.querySelectorAll('.filter-button');
@@ -946,6 +932,7 @@
         const currentTheme = localStorage.getItem('theme');
         if (currentTheme === 'light') {
             body.classList.add('light-theme');
+            themeToggle.querySelector('img').src = "https://www.ysjf.com/assets/ysjf_active@2x-BTnDL7hV.png";
         }
 
         let sidebarExpanded = true;
@@ -954,72 +941,80 @@
         let lastScrollPosition = 0;
         let currentSlide = 0;
         let slideInterval;
+        let touchStartX = 0;
+        let touchEndX = 0;
 
-        // 初始化幻灯片
+        // 优化移动端幻灯片
         function initSlider() {
             if (window.innerWidth > 768) return;
             
             // 自动轮播
             slideInterval = setInterval(() => {
-                currentSlide = (currentSlide + 1) % 3;
-                updateSlider();
+                goToSlide((currentSlide + 1) % 3);
             }, 3000);
             
             // 点按切换
             sliderDots.forEach(dot => {
                 dot.addEventListener('click', function() {
-                    currentSlide = parseInt(this.dataset.index);
-                    updateSlider();
+                    goToSlide(parseInt(this.dataset.index));
                     resetSlideInterval();
                 });
             });
             
             // 触摸滑动
-            let touchStartX = 0;
-            let touchEndX = 0;
-            
-            slider.addEventListener('touchstart', e => {
-                touchStartX = e.changedTouches[0].screenX;
-                resetSlideInterval();
-            }, { passive: true });
-            
-            slider.addEventListener('touchend', e => {
-                touchEndX = e.changedTouches[0].screenX;
-                handleSwipe();
-            }, { passive: true });
+            slider.addEventListener('touchstart', handleTouchStart, { passive: true });
+            slider.addEventListener('touchmove', handleTouchMove, { passive: false });
+            slider.addEventListener('touchend', handleTouchEnd, { passive: true });
         }
         
-        function handleSwipe() {
-            const threshold = 50;
-            
-            if (touchEndX < touchStartX - threshold) {
-                // 向左滑动 - 下一张
-                currentSlide = (currentSlide + 1) % 3;
-                updateSlider();
-            } else if (touchEndX > touchStartX + threshold) {
-                // 向右滑动 - 上一张
-                currentSlide = (currentSlide - 1 + 3) % 3;
-                updateSlider();
+        function handleTouchStart(e) {
+            touchStartX = e.touches[0].clientX;
+            resetSlideInterval();
+            clearInterval(slideInterval);
+        }
+        
+        function handleTouchMove(e) {
+            touchEndX = e.touches[0].clientX;
+            const diff = touchStartX - touchEndX;
+            if (Math.abs(diff) > 10) {
+                e.preventDefault(); // 阻止默认滚动行为
+                slider.style.transition = 'none';
+                slider.style.transform = `translateX(calc(-${currentSlide * 100}% - ${diff}px))`;
             }
         }
         
-        function updateSlider() {
+        function handleTouchEnd() {
+            slider.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+            const threshold = 50;
+            const diff = touchStartX - touchEndX;
+            
+            if (diff > threshold) {
+                // 向左滑动 - 下一张
+                goToSlide((currentSlide + 1) % 3);
+            } else if (diff < -threshold) {
+                // 向右滑动 - 上一张
+                goToSlide((currentSlide - 1 + 3) % 3);
+            } else {
+                // 回弹到当前幻灯片
+                goToSlide(currentSlide);
+            }
+            
+            resetSlideInterval();
+        }
+        
+        function goToSlide(index) {
+            currentSlide = index;
             slider.style.transform = `translateX(-${currentSlide * 100}%)`;
             
-            sliderDots.forEach((dot, index) => {
-                if (index === currentSlide) {
-                    dot.classList.add('active');
-                } else {
-                    dot.classList.remove('active');
-                }
+            sliderDots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === currentSlide);
             });
         }
         
         function resetSlideInterval() {
             clearInterval(slideInterval);
             slideInterval = setInterval(() => {
-                currentSlide = (currentSlide + 1) % 3;
-                updateSlider();
+                goToSlide((currentSlide + 1) % 3);
             }, 3000);
         }
 
@@ -1034,7 +1029,6 @@
                 }, 2000);
             }
             
-            // 初始化幻灯片
             initSlider();
         });
 
@@ -1054,11 +1048,24 @@
         checkScreenSize();
         window.addEventListener('resize', checkScreenSize);
 
-        // Theme toggle
+        // Theme toggle with rotation animation
         themeToggle.addEventListener('click', () => {
-            body.classList.toggle('light-theme');
-            const theme = body.classList.contains('light-theme') ? 'light' : 'dark';
-            localStorage.setItem('theme', theme);
+            themeToggle.classList.add('rotate');
+            
+            setTimeout(() => {
+                body.classList.toggle('light-theme');
+                const theme = body.classList.contains('light-theme') ? 'light' : 'dark';
+                localStorage.setItem('theme', theme);
+                
+                // 切换图标
+                if (theme === 'light') {
+                    themeToggle.querySelector('img').src = "https://www.ysjf.com/assets/ysjf_active@2x-BTnDL7hV.png";
+                } else {
+                    themeToggle.querySelector('img').src = "https://www.ysjf.com/assets/ysjf@2x-DcH_D2DE.png";
+                }
+                
+                themeToggle.classList.remove('rotate');
+            }, 500);
         });
 
         // Sidebar hover for desktop
@@ -1082,19 +1089,6 @@
             sidebar.classList.remove('visible');
             overlay.classList.remove('visible');
             isMenuOpen = false;
-        });
-
-        // User menu toggle
-        userMenuToggle.addEventListener('click', (e) => {
-            e.stopPropagation();
-            userMenu.classList.toggle('active');
-        });
-
-        // Close dropdown when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!userMenu.contains(e.target) && !userMenuToggle.contains(e.target)) {
-                userMenu.classList.remove('active');
-            }
         });
 
         // Sidebar and bottom nav interactions
