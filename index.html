@@ -6,201 +6,560 @@
     <title>YSJF - 优化导航栏</title>
     <style>
         :root {
-            --primary: #ff0000;
-            --dark-bg: #0f0f0f; --dark-surface: #202020; --dark-text: #f1f1f1; --dark-hover: #303030;
-            --light-bg: #fff; --light-surface: #f9f9f9; --light-text: #030303; --light-hover: #e5e5e5;
-            --speed: 0.3s; --sidebar: 240px; --sidebar-collapsed: 72px; --header: 56px;
+            --primary-color: #ff0000;
+            --dark-bg: #0f0f0f;
+            --dark-surface: #202020;
+            --dark-text: #f1f1f1;
+            --dark-hover: #303030;
+            --light-bg: #ffffff;
+            --light-surface: #f9f9f9;
+            --light-text: #030303;
+            --light-hover: #e5e5e5;
+            --transition-speed: 0.3s;
+            --sidebar-width: 240px;
+            --sidebar-collapsed-width: 72px;
+            --header-height: 56px;
         }
-        
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Roboto', -apple-system, sans-serif; }
-        
-        body { background: var(--dark-bg); color: var(--dark-text); transition: background var(--speed), color var(--speed); }
-        body.light { background: var(--light-bg); color: var(--light-text); }
-        
-        header { 
-            display: flex; justify-content: space-between; align-items: center; padding: 0 16px;
-            height: var(--header); background: var(--dark-bg); position: fixed; top: 0; left: 0; right: 0;
-            z-index: 1000; border-bottom: 1px solid var(--dark-hover); transition: all var(--speed);
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Oxygen, Ubuntu, Cantarell, sans-serif;
         }
-        body.light header { background: var(--light-bg); border-color: var(--light-hover); }
-        
-        .logo-container { display: flex; align-items: center; gap: 12px; }
-        .logo { height: 30px; }
-        
-        .theme-toggle, .control-icon { 
-            padding: 8px; cursor: pointer; border-radius: 50%; transition: all var(--speed), transform 0.2s;
-            display: flex; align-items: center; justify-content: center;
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--dark-text);
+            transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
+            overscroll-behavior-y: contain; /* 防止页面整体滚动 */
         }
-        .theme-toggle:hover, .control-icon:hover { 
-            background: var(--dark-hover); transform: scale(1.1); 
+
+        body.light-theme {
+            background-color: var(--light-bg);
+            color: var(--light-text);
         }
-        body.light .theme-toggle:hover, body.light .control-icon:hover { background: var(--light-hover); }
-        .theme-toggle:active, .control-icon:active { transform: scale(0.95); }
-        .theme-toggle svg, .control-icon svg { width: 24px; height: 24px; }
-        
-        .user-controls { display: flex; align-items: center; min-width: 0; position: relative; }
-        
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            height: var(--header-height);
+            background-color: var(--dark-bg);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            border-bottom: 1px solid var(--dark-hover);
+            transition: all var(--transition-speed) ease;
+        }
+
+        body.light-theme header {
+            background-color: var(--light-bg);
+            border-bottom: 1px solid var(--light-hover);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            height: 30px;
+            width: auto;
+        }
+
+        .theme-toggle {
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 50%;
+            transition: background-color var(--transition-speed) ease, transform 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .theme-toggle:hover {
+            background-color: var(--dark-hover);
+            transform: scale(1.1);
+        }
+
+        body.light-theme .theme-toggle:hover {
+            background-color: var(--light-hover);
+        }
+
+        .theme-toggle:active {
+            transform: scale(0.95);
+        }
+
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .user-controls {
+            display: flex;
+            align-items: center;
+            min-width: 0;
+            position: relative;
+        }
+
+        .control-icon {
+            padding: 8px;
+            margin-left: 4px;
+            cursor: pointer;
+            border-radius: 50%;
+            transition: background-color var(--transition-speed) ease, transform 0.2s ease;
+        }
+
+        .control-icon:hover {
+            background-color: var(--dark-hover);
+            transform: scale(1.1);
+        }
+
+        body.light-theme .control-icon:hover {
+            background-color: var(--light-hover);
+        }
+
+        .control-icon:active {
+            transform: scale(0.95);
+        }
+
         .dropdown-menu {
-            position: absolute; top: 48px; right: 8px; background: var(--dark-surface); border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3); min-width: 160px; z-index: 1100; opacity: 0;
-            visibility: hidden; transform: translateY(-10px); transition: all var(--speed);
+            position: absolute;
+            top: 48px;
+            right: 8px;
+            background-color: var(--dark-surface);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            min-width: 160px;
+            z-index: 1100;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: opacity var(--transition-speed) ease, transform var(--transition-speed) ease;
         }
-        body.light .dropdown-menu { background: var(--light-surface); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .dropdown-menu.active { opacity: 1; visibility: visible; transform: none; }
-        
-        .dropdown-item { 
-            padding: 12px 16px; font-size: 14px; cursor: pointer; transition: background var(--speed);
+
+        body.light-theme .dropdown-menu {
+            background-color: var(--light-surface);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
-        .dropdown-item:hover { background: var(--dark-hover); }
-        body.light .dropdown-item:hover { background: var(--light-hover); }
-        
-        .user-avatar { 
-            width: 32px; height: 32px; border-radius: 50%; margin-left: 8px; cursor: pointer;
-            transition: transform 0.2s;
+
+        .dropdown-menu.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
         }
-        .user-avatar:hover { transform: scale(1.1); }
-        .user-avatar:active { transform: scale(0.95); }
-        
-        .main-content { display: flex; margin-top: var(--header); transition: margin-left var(--speed); }
-        
+
+        .dropdown-item {
+            padding: 12px 16px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color var(--transition-speed) ease;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--dark-hover);
+        }
+
+        body.light-theme .dropdown-item:hover {
+            background-color: var(--light-hover);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            margin-left: 8px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.1);
+        }
+
+        .user-avatar:active {
+            transform: scale(0.95);
+        }
+
+        .main-content {
+            display: flex;
+            margin-top: var(--header-height);
+            transition: margin-left var(--transition-speed) ease;
+        }
+
         .sidebar {
-            width: var(--sidebar); padding: 12px 0; background: var(--dark-bg); 
-            height: calc(100vh - var(--header)); position: fixed; top: var(--header); left: 0;
-            overflow-y: auto; z-index: 900; transition: all var(--speed); transform: translateX(0);
+            width: var(--sidebar-width);
+            padding: 12px 0;
+            background-color: var(--dark-bg);
+            height: calc(100vh - var(--header-height));
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            overflow-y: auto;
+            z-index: 900;
+            transition: width var(--transition-speed) ease, transform var(--transition-speed) ease;
+            transform: translateX(0);
+            will-change: width, transform;
+            -webkit-overflow-scrolling: touch; /* 平滑滚动 */
         }
-        body.light .sidebar { background: var(--light-bg); }
-        .sidebar.collapsed { width: var(--sidebar-collapsed); overflow-x: hidden; }
-        .sidebar.collapsed .sidebar-item-text, .sidebar.collapsed .sidebar-section-title { 
-            opacity: 0; width: 0; height: 0; overflow: hidden; margin: 0; padding: 0; 
+
+        body.light-theme .sidebar {
+            background-color: var(--light-bg);
         }
-        
-        .sidebar-section { 
-            padding: 8px 0; border-bottom: 1px solid var(--dark-hover); 
-            transition: border-color var(--speed);
+
+        .sidebar.collapsed {
+            width: var(--sidebar-collapsed-width);
+            overflow-x: hidden;
         }
-        body.light .sidebar-section { border-color: var(--light-hover); }
-        
+
+        .sidebar.collapsed .sidebar-item-text,
+        .sidebar.collapsed .sidebar-section-title {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .sidebar-section {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--dark-hover);
+            transition: border-color var(--transition-speed) ease;
+        }
+
+        body.light-theme .sidebar-section {
+            border-bottom: 1px solid var(--light-hover);
+        }
+
         .sidebar-section-title {
-            padding: 8px 24px; font-size: 16px; font-weight: 500; color: var(--dark-text);
-            opacity: 0.7; transition: all var(--speed);
+            padding: 8px 24px;
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--dark-text);
+            opacity: 0.7;
+            transition: all var(--transition-speed) ease;
         }
-        body.light .sidebar-section-title { color: var(--light-text); }
-        
+
+        body.light-theme .sidebar-section-title {
+            color: var(--light-text);
+        }
+
         .sidebar-item {
-            display: flex; align-items: center; padding: 0 12px 0 24px; height: 40px; cursor: pointer;
-            overflow: hidden; transition: all var(--speed); animation: slideIn 0.3s ease forwards; opacity: 0;
+            display: flex;
+            align-items: center;
+            padding: 0 12px 0 24px;
+            height: 40px;
+            cursor: pointer;
+            overflow: hidden;
+            transition: all var(--transition-speed) ease;
         }
-        .sidebar-item:hover { background: var(--dark-hover); }
-        body.light .sidebar-item:hover { background: var(--light-hover); }
-        .sidebar-item.active { background: var(--dark-hover); font-weight: bold; }
-        body.light .sidebar-item.active { background: var(--light-hover); }
-        
+
+        .sidebar-item:hover {
+            background-color: var(--dark-hover);
+        }
+
+        body.light-theme .sidebar-item:hover {
+            background-color: var(--light-hover);
+        }
+
+        .sidebar-item.active {
+            background-color: var(--dark-hover);
+            font-weight: bold;
+        }
+
+        body.light-theme .sidebar-item.active {
+            background-color: var(--light-hover);
+        }
+
         .sidebar-item-icon {
-            min-width: 24px; margin-right: 24px; display: flex; align-items: center;
-            justify-content: center; transition: margin var(--speed);
+            min-width: 24px;
+            margin-right: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: margin var(--transition-speed) ease;
         }
-        .sidebar.collapsed .sidebar-item-icon { margin-right: 0; }
-        
-        .sidebar-item-text { font-size: 14px; white-space: nowrap; transition: opacity var(--speed); }
-        
+
+        .sidebar.collapsed .sidebar-item-icon {
+            margin-right: 0;
+        }
+
+        .sidebar-item-text {
+            font-size: 14px;
+            white-space: nowrap;
+            transition: opacity var(--transition-speed) ease;
+        }
+
         .content {
-            flex-grow: 1; padding: 20px; margin-left: var(--sidebar); transition: margin-left var(--speed);
+            flex-grow: 1;
+            padding: 20px;
+            margin-left: var(--sidebar-width);
+            transition: margin-left var(--transition-speed) ease;
+            will-change: margin-left;
+            transform: translateZ(0);
         }
-        .sidebar.collapsed ~ .content { margin-left: var(--sidebar-collapsed); }
-        
-        .content-container { width: 100%; max-width: 1200px; }
-        
-        .content-header { 
-            margin-bottom: 20px; display: flex; justify-content: space-between; 
+
+        .sidebar.collapsed ~ .content {
+            margin-left: var(--sidebar-collapsed-width);
+        }
+
+        .content-container {
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .content-header {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
             align-items: center;
         }
-        @media (max-width: 768px) { .content-header { flex-direction: column; align-items: flex-start; gap: 12px; } }
-        
-        .content-title { font-size: 24px; font-weight: bold; }
-        
-        .content-filters { display: flex; gap: 10px; }
-        @media (max-width: 768px) { .content-filters { width: 100%; overflow-x: auto; padding-bottom: 8px; } }
-        
-        .filter-button {
-            padding: 8px 16px; background: var(--dark-surface); border: none; border-radius: 20px;
-            color: var(--dark-text); cursor: pointer; transition: all var(--speed);
+
+        .content-title {
+            font-size: 24px;
+            font-weight: bold;
         }
-        body.light .filter-button { background: var(--light-surface); color: var(--light-text); }
-        .filter-button:hover { background: var(--dark-hover); }
-        body.light .filter-button:hover { background: var(--light-hover); }
-        .filter-button.active { background: var(--primary); color: white; }
-        
+
+        .content-filters {
+            display: flex;
+            gap: 10px;
+        }
+
+        .filter-button {
+            padding: 8px 16px;
+            background-color: var(--dark-surface);
+            border: none;
+            border-radius: 20px;
+            color: var(--dark-text);
+            cursor: pointer;
+            transition: all var(--transition-speed) ease;
+        }
+
+        body.light-theme .filter-button {
+            background-color: var(--light-surface);
+            color: var(--light-text);
+        }
+
+        .filter-button:hover {
+            background-color: var(--dark-hover);
+        }
+
+        body.light-theme .filter-button:hover {
+            background-color: var(--light-hover);
+        }
+
+        .filter-button.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
         .content-grid {
-            width: 100%; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 20px;
         }
-        @media (max-width: 768px) { .content-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); } }
-        @media (max-width: 480px) { .content-grid { grid-template-columns: 1fr; } }
-        
+
         .content-card {
-            background: var(--dark-surface); border-radius: 8px; overflow: hidden;
-            transition: all var(--speed);
+            background-color: var(--dark-surface);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
         }
-        body.light .content-card { background: var(--light-surface); }
-        .content-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
-        
-        .card-image { width: 100%; height: 180px; object-fit: cover; }
-        @media (max-width: 480px) { .card-image { height: 200px; } }
-        
-        .card-content { padding: 12px; }
-        .card-title { 
-            font-size: 16px; font-weight: 500; margin-bottom: 8px;
-            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+
+        body.light-theme .content-card {
+            background-color: var(--light-surface);
         }
-        .card-meta { 
-            font-size: 14px; color: #aaa; display: flex; justify-content: space-between;
+
+        .content-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
-        body.light .card-meta { color: #666; }
-        
+
+        .card-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+
+        .card-content {
+            padding: 12px;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-meta {
+            font-size: 14px;
+            color: #aaa;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        body.light-theme .card-meta {
+            color: #666;
+        }
+
         .bottom-nav {
-            display: none; position: fixed; bottom: 0; left: 0; right: 0; background: var(--dark-surface);
-            height: 60px; z-index: 1000; box-shadow: 0 -2px 8px rgba(0,0,0,0.2); transition: transform var(--speed);
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--dark-surface);
+            height: 60px;
+            z-index: 1000;
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease;
         }
-        body.light .bottom-nav { background: var(--light-surface); box-shadow: 0 -2px 8px rgba(0,0,0,0.1); }
-        .bottom-nav.hidden { transform: translateY(100%); }
-        
-        .bottom-nav-items { display: flex; justify-content: space-around; align-items: center; height: 100%; }
-        
+
+        body.light-theme .bottom-nav {
+            background-color: var(--light-surface);
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .bottom-nav.hidden {
+            transform: translateY(100%);
+        }
+
+        .bottom-nav-items {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            height: 100%;
+        }
+
         .bottom-nav-item {
-            flex: 1; display: flex; flex-direction: column; align-items: center; color: var(--dark-text);
-            font-size: 12px; cursor: pointer; padding: 8px; transition: background var(--speed);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--dark-text);
+            font-size: 12px;
+            cursor: pointer;
+            padding: 8px;
+            transition: background-color var(--transition-speed) ease;
         }
-        body.light .bottom-nav-item { color: var(--light-text); }
-        .bottom-nav-item:hover { background: var(--dark-hover); }
-        body.light .bottom-nav-item:hover { background: var(--light-hover); }
-        .bottom-nav-item.active { color: var(--primary); }
-        .bottom-nav-item svg { width: 24px; height: 24px; margin-bottom: 4px; }
-        
+
+        body.light-theme .bottom-nav-item {
+            color: var(--light-text);
+        }
+
+        .bottom-nav-item:hover {
+            background-color: var(--dark-hover);
+        }
+
+        body.light-theme .bottom-nav-item:hover {
+            background-color: var(--light-hover);
+        }
+
+        .bottom-nav-item.active {
+            color: var(--primary-color);
+        }
+
+        .bottom-nav-item svg {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 4px;
+        }
+
         .overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5);
-            z-index: 850; opacity: 0; pointer-events: none; transition: opacity var(--speed);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 850;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--transition-speed) ease;
         }
-        .overlay.visible { opacity: 1; pointer-events: all; }
-        
+
+        .overlay.visible {
+            opacity: 1;
+            pointer-events: all;
+        }
+
         @media (max-width: 768px) {
-            .sidebar { transform: translateX(-100%); width: 280px; z-index: 950; }
-            .sidebar.visible { transform: translateX(0); }
-            .content { 
-                margin-left: 0; padding: 16px; 
-                padding-top: calc(var(--header) + 56px); padding-bottom: 80px;
+            .sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+                z-index: 950;
+                overflow-y: auto;
             }
-            .bottom-nav { display: block; }
+
+            .sidebar.visible {
+                transform: translateX(0);
+            }
+
+            .content {
+                margin-left: 0;
+                padding: 16px;
+                padding-top: calc(var(--header-height) + 56px);
+                padding-bottom: 80px;
+            }
+
+            .bottom-nav {
+                display: block;
+            }
+
+            .content-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .content-filters {
+                width: 100%;
+                overflow-x: auto;
+                padding-bottom: 8px;
+            }
+
+            .content-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            }
         }
-        
+
+        @media (max-width: 480px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card-image {
+                height: 200px;
+            }
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: none; }
+            to { opacity: 1; transform: translateY(0); }
         }
+
         @keyframes slideIn {
             from { transform: translateX(-20px); opacity: 0; }
-            to { transform: none; opacity: 1; }
+            to { transform: translateX(0); opacity: 1; }
         }
-        
+
+        .sidebar-item {
+            animation: slideIn 0.3s ease forwards;
+            opacity: 0;
+        }
+
         .sidebar-item:nth-child(1) { animation-delay: 0.1s; }
         .sidebar-item:nth-child(2) { animation-delay: 0.15s; }
         .sidebar-item:nth-child(3) { animation-delay: 0.2s; }
@@ -219,19 +578,23 @@
     <header>
         <div class="logo-container">
             <div class="theme-toggle" id="themeToggle">
-                <svg viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg>
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"></path>
+                </svg>
             </div>
             <img src="hv" alt="Logo" class="logo">
         </div>
         
         <div class="user-controls">
             <div class="control-icon" id="userMenuToggle">
-                <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
+                </svg>
             </div>
             <div class="dropdown-menu" id="userMenu">
-                <div class="dropdown-item">查看个人资料</div>
-                <div class="dropdown-item">设置</div>
-                <div class="dropdown-item">退出登录</div>
+                <div class="dropdown-item" onclick="alert('View Profile')">查看个人资料</div>
+                <div class="dropdown-item" onclick="alert('Open Settings')">设置</div>
+                <div class="dropdown-item" onclick="alert('Logging out...')">退出登录</div>
             </div>
             <img src="https://thirdwx.qlogo.cn/mmopen/vi_32/FmXo0ZgeSGcMnUbiaxJxZe4IbMO8uVpho2u4QYEWN3FibxkbrfWkEXFGNGmtyhouaCYsdY2jjrBibibXlQ1iaJgxKErfHF9vl6BxcHiaYBCiageneU/132" alt="User Avatar" class="user-avatar">
         </div>
@@ -240,15 +603,27 @@
     <div class="sidebar" id="sidebar">
         <div class="sidebar-section">
             <div class="sidebar-item active">
-                <div class="sidebar-item-icon"><svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg></div>
+                <div class="sidebar-item-icon">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path>
+                    </svg>
+                </div>
                 <div class="sidebar-item-text">首页</div>
             </div>
             <div class="sidebar-item">
-                <div class="sidebar-item-icon"><svg viewBox="0 0 24 24"><path d="M10 14.65v-5.3L15 12l-5 2.65zm7.77-4.33c-.77-.32-1.2-.5-1.2-.5L18 9.06c1.84-.96 2.53-3.23 1.56-5.06s-3.24-2.53-5.07-1.56L6 6.94c-1.29.68-2.07 2.04-2 3.49.07 1.42.93 2.67 2.22 3.25.03.01 1.2.5 1.2.5L6 14.93c-1.83.97-2.53 3.24-1.56 5.07.97 1.83 3.24 2.53 5.07 1.56l8.5-4.5c1.29-.68 2.06-2.04 1.99-3.49-.07-1.42-.94-2.68-2.23-3.25zm-.23 5.86l-8.5 4.5c-1.34.71-3.01.2-3.72-1.14-.71-1.34-.2-3.01 1.14-3.72l2.04-1.08v-1.21l-.69-.28-1.11-.46c-.99-.41-1.65-1.35-1.7-2.41-.05-1.06.52-2.06 1.46-2.56l8.5-4.5c1.34-.71 3.01-.2 3.72 1.14.71 1.34.2 3.01-1.14 3.72L15.5 9.26v1.21l1.8.74c.99.41 1.65 1.35 1.7 2.41.05 1.06-.52 2.06-1.46 2.56z"/></svg></div>
+                <div class="sidebar-item-icon">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                        <path d="M10 14.65v-5.3L15 12l-5 2.65zm7.77-4.33c-.77-.32-1.2-.5-1.2-.5L18 9.06c1.84-.96 2.53-3.23 1.56-5.06s-3.24-2.53-5.07-1.56L6 6.94c-1.29.68-2.07 2.04-2 3.49.07 1.42.93 2.67 2.22 3.25.03.01 1.2.5 1.2.5L6 14.93c-1.83.97-2.53 3.24-1.56 5.07.97 1.83 3.24 2.53 5.07 1.56l8.5-4.5c1.29-.68 2.06-2.04 1.99-3.49-.07-1.42-.94-2.68-2.23-3.25zm-.23 5.86l-8.5 4.5c-1.34.71-3.01.2-3.72-1.14-.71-1.34-.2-3.01 1.14-3.72l2.04-1.08v-1.21l-.69-.28-1.11-.46c-.99-.41-1.65-1.35-1.7-2.41-.05-1.06.52-2.06 1.46-2.56l8.5-4.5c1.34-.71 3.01-.2 3.72 1.14.71 1.34.2 3.01-1.14 3.72L15.5 9.26v1.21l1.8.74c.99.41 1.65 1.35 1.7 2.41.05 1.06-.52 2.06-1.46 2.56z"></path>
+                    </svg>
+                </div>
                 <div class="sidebar-item-text">Shorts</div>
             </div>
             <div class="sidebar-item">
-                <div class="sidebar-item-icon"><svg viewBox="0 0 24 24"><path d="M10 18v-6l5 3-5 3zm7-15H7v1h10V3zm3 3H4v1h16V6zm2 3H2v12h20V9zM3 10h18v10H3V10z"/></svg></div>
+                <div class="sidebar-item-icon">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                        <path d="M10 18v-6l5 3-5 3zm7-15H7v1h10V3zm3 3H4v1h16V6zm2 3H2v12h20V9zM3 10h18v10H3V10z"></path>
+                    </svg>
+                </div>
                 <div class="sidebar-item-text">订阅内容</div>
             </div>
         </div>
@@ -256,11 +631,19 @@
         <div class="sidebar-section">
             <div class="sidebar-section-title">探索</div>
             <div class="sidebar-item">
-                <div class="sidebar-item-icon"><svg viewBox="0 0 24 24"><path d="M11 7l6 3.5-6 3.5V7zm7 13H4V6H3v15h15v-1zm3-2H6V3h15v15zM7 17h13V4H7v13z"/></svg></div>
+                <div class="sidebar-item-icon">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                        <path d="M11 7l6 3.5-6 3.5V7zm7 13H4V6H3v15h15v-1zm3-2H6V3h15v15zM7 17h13V4H7v13z"></path>
+                    </svg>
+                </div>
                 <div class="sidebar-item-text">媒体库</div>
             </div>
             <div class="sidebar-item">
-                <div class="sidebar-item-icon"><svg viewBox="0 0 24 24"><path d="M14.97 16.95L10 13.87V7h2v5.76l4.03 2.49-1.06 1.7zM12 3c-4.96 0-9 4.04-9 9s4.04 9 9 9 9-4.04 9-9-4.04-9-9-9m0-1c5.52 0 10 4.48 10 10s-4.48 10-10 10S2 17.52 2 12 6.48 2 12 2z"/></svg></div>
+                <div class="sidebar-item-icon">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                        <path d="M14.97 16.95L10 13.87V7h2v5.76l4.03 2.49-1.06 1.7zM12 3c-4.96 0-9 4.04-9 9s4.04 9 9 9 9-4.04 9-9-4.04-9-9-9m0-1c5.52 0 10 4.48 10 10s-4.48 10-10 10S2 17.52 2 12 6.48 2 12 2z"></path>
+                    </svg>
+                </div>
                 <div class="sidebar-item-text">历史记录</div>
             </div>
         </div>
@@ -268,11 +651,19 @@
         <div class="sidebar-section">
             <div class="sidebar-section-title">个人</div>
             <div class="sidebar-item">
-                <div class="sidebar-item-icon"><svg viewBox="0 0 24 24"><path d="M12 3.67c-4.58 0-8.33 3.75-8.33 8.33s3.75 8.33 8.33 8.33 8.33-3.75 8.33-8.33S16.58 3.67 12 3.67zm0 15c-3.68 0-6.67-2.99-6.67-6.67S8.32 5.33 12 5.33s6.67 2.99 6.67 6.67-2.99 6.67-6.67 6.67zm1-11.67h-1v5l3.9 2.34.6-.92-3.5-2.08V7z"/></svg></div>
+                <div class="sidebar-item-icon">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                        <path d="M12 3.67c-4.58 0-8.33 3.75-8.33 8.33s3.75 8.33 8.33 8.33 8.33-3.75 8.33-8.33S16.58 3.67 12 3.67zm0 15c-3.68 0-6.67-2.99-6.67-6.67S8.32 5.33 12 5.33s6.67 2.99 6.67 6.67-2.99 6.67-6.67 6.67zm1-11.67h-1v5l3.9 2.34.6-.92-3.5-2.08V7z"></path>
+                    </svg>
+                </div>
                 <div class="sidebar-item-text">您的视频</div>
             </div>
             <div class="sidebar-item">
-                <div class="sidebar-item-icon"><svg viewBox="0 0 24 24"><path d="M18.77 11h-4.23l1.52-4.94C16.38 5.03 15.54 4 14.38 4c-.58 0-1.14.24-1.52.65L7 11H3v10h4v-9.65l1-1.27 4.58 6.02c.34.44.85.68 1.4.68h6.67c1.03 0 1.98-.79 1.98-1.81l.63-4.47c.1-.7-.37-1.37-1.07-1.58zM7 15H5v-2h2v2zm-2 4v-2h2v2H5zm12 0h-4v-2h4v2zm0-4h-4v-2h4v2z"/></svg></div>
+                <div class="sidebar-item-icon">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                        <path d="M18.77 11h-4.23l1.52-4.94C16.38 5.03 15.54 4 14.38 4c-.58 0-1.14.24-1.52.65L7 11H3v10h4v-9.65l1-1.27 4.58 6.02c.34.44.85.68 1.4.68h6.67c1.03 0 1.98-.79 1.98-1.81l.63-4.47c.1-.7-.37-1.37-1.07-1.58zM7 15H5v-2h2v2zm-2 4v-2h2v2H5zm12 0h-4v-2h4v2zm0-4h-4v-2h4v2z"></path>
+                    </svg>
+                </div>
                 <div class="sidebar-item-text">喜欢的内容</div>
             </div>
         </div>
@@ -280,11 +671,19 @@
         <div class="sidebar-section">
             <div class="sidebar-section-title">设置</div>
             <div class="sidebar-item">
-                <div class="sidebar-item-icon"><svg viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg></div>
+                <div class="sidebar-item-icon">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                        <path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"></path>
+                    </svg>
+                </div>
                 <div class="sidebar-item-text">设置</div>
             </div>
             <div class="sidebar-item">
-                <div class="sidebar-item-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div>
+                <div class="sidebar-item-icon">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"></path>
+                    </svg>
+                </div>
                 <div class="sidebar-item-text">报告问题</div>
             </div>
         </div>
@@ -369,141 +768,201 @@
     <div class="bottom-nav" id="bottomNav">
         <div class="bottom-nav-items">
             <div class="bottom-nav-item active" data-section="home">
-                <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path>
+                </svg>
                 <span>首页</span>
             </div>
             <div class="bottom-nav-item" data-section="explore">
-                <svg viewBox="0 0 24 24"><path d="M10 14.65v-5.3L15 12l-5 2.65zm7.77-4.33c-.77-.32-1.2-.5-1.2-.5L18 9.06c1.84-.96 2.53-3.23 1.56-5.06s-3.24-2.53-5.07-1.56L6 6.94c-1.29.68-2.07 2.04-2 3.49.07 1.42.93 2.67 2.22 3.25.03.01 1.2.5 1.2.5L6 14.93c-1.83.97-2.53 3.24-1.56 5.07.97 1.83 3.24 2.53 5.07 1.56l8.5-4.5c1.29-.68 2.06-2.04 1.99-3.49-.07-1.42-.94-2.68-2.23-3.25zm-.23 5.86l-8.5 4.5c-1.34.71-3.01.2-3.72-1.14-.71-1.34-.2-3.01 1.14-3.72l2.04-1.08v-1.21l-.69-.28-1.11-.46c-.99-.41-1.65-1.35-1.7-2.41-.05-1.06.52-2.06 1.46-2.56l8.5-4.5c1.34-.71 3.01-.2 3.72 1.14.71 1.34.2 3.01-1.14 3.72L15.5 9.26v1.21l1.8.74c.99.41 1.65 1.35 1.7 2.41.05 1.06-.52 2.06-1.46 2.56z"/></svg>
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M10 14.65v-5.3L15 12l-5 2.65zm7.77-4.33c-.77-.32-1.2-.5-1.2-.5L18 9.06c1.84-.96 2.53-3.23 1.56-5.06s-3.24-2.53-5.07-1.56L6 6.94c-1.29.68-2.07 2.04-2 3.49.07 1.42.93 2.67 2.22 3.25.03.01 1.2.5 1.2.5L6 14.93c-1.83.97-2.53 3.24-1.56 5.07.97 1.83 3.24 2.53 5.07 1.56l8.5-4.5c1.29-.68 2.06-2.04 1.99-3.49-.07-1.42-.94-2.68-2.23-3.25zm-.23 5.86l-8.5 4.5c-1.34.71-3.01.2-3.72-1.14-.71-1.34-.2-3.01 1.14-3.72l2.04-1.08v-1.21l-.69-.28-1.11-.46c-.99-.41-1.65-1.35-1.7-2.41-.05-1.06.52-2.06 1.46-2.56l8.5-4.5c1.34-.71 3.01-.2 3.72 1.14.71 1.34.2 3.01-1.14 3.72L15.5 9.26v1.21l1.8.74c.99.41 1.65 1.35 1.7 2.41.05 1.06-.52 2.06-1.46 2.56z"></path>
+                </svg>
                 <span>探索</span>
             </div>
             <div class="bottom-nav-item" data-section="subscriptions">
-                <svg viewBox="0 0 24 24"><path d="M12 3.67c-4.58 0-8.33 3.75-8.33 8.33s3.75 8.33 8.33 8.33 8.33-3.75 8.33-8.33S16.58 3.67 12 3.67zm0 15c-3.68 0-6.67-2.99-6.67-6.67S8.32 5.33 12 5.33s6.67 2.99 6.67 6.67-2.99 6.67-6.67 6.67zm1-11.67h-1v5l3.9 2.34.6-.92-3.5-2.08V7z"/></svg>
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 3.67c-4.58 0-8.33 3.75-8.33 8.33s3.75 8.33 8.33 8.33 8.33-3.75 8.33-8.33S16.58 3.67 12 3.67zm0 15c-3.68 0-6.67-2.99-6.67-6.67S8.32 5.33 12 5.33s6.67 2.99 6.67 6.67-2.99 6.67-6.67 6.67zm1-11.67h-1v5l3.9 2.34.6-.92-3.5-2.08V7z"></path>
+                </svg>
                 <span>订阅</span>
             </div>
             <div class="bottom-nav-item" data-section="menu">
-                <svg viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"></path>
+                </svg>
                 <span>菜单</span>
             </div>
         </div>
     </div>
     
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const body = document.body;
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
-            const themeToggle = document.getElementById('themeToggle');
-            const userMenuToggle = document.getElementById('userMenuToggle');
-            const userMenu = document.getElementById('userMenu');
-            const bottomNav = document.getElementById('bottomNav');
-            
-            // Theme
-            if (localStorage.getItem('theme') === 'light') body.classList.add('light');
-            themeToggle.addEventListener('click', () => {
-                body.classList.toggle('light');
-                localStorage.setItem('theme', body.classList.contains('light') ? 'light' : 'dark');
-            });
-            
-            // User menu
-            userMenuToggle.addEventListener('click', (e) => {
-                e.stopPropagation();
-                userMenu.classList.toggle('active');
-            });
-            document.addEventListener('click', (e) => {
-                if (!userMenu.contains(e.target) && !userMenuToggle.contains(e.target)) {
-                    userMenu.classList.remove('active');
-                }
-            });
-            
-            // Sidebar
-            let isMouseOverSidebar = false;
-            const checkScreenSize = () => {
-                if (window.innerWidth <= 768) {
-                    sidebar.classList.remove('collapsed', 'visible');
-                    overlay.classList.remove('visible');
-                } else {
-                    sidebar.classList.add('visible');
-                }
-            };
-            
-            checkScreenSize();
-            window.addEventListener('resize', checkScreenSize);
-            
-            sidebar.addEventListener('mouseenter', () => {
-                if (window.innerWidth > 768) {
-                    sidebar.classList.remove('collapsed');
-                    isMouseOverSidebar = true;
-                }
-            });
-            
-            sidebar.addEventListener('mouseleave', () => {
-                if (window.innerWidth > 768) {
-                    sidebar.classList.add('collapsed');
-                    isMouseOverSidebar = false;
-                }
-            });
-            
-            overlay.addEventListener('click', () => {
+        const body = document.body;
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const themeToggle = document.getElementById('themeToggle');
+        const userMenuToggle = document.getElementById('userMenuToggle');
+        const userMenu = document.getElementById('userMenu');
+        const bottomNav = document.getElementById('bottomNav');
+        const bottomNavItems = document.querySelectorAll('.bottom-nav-item');
+        const filterButtons = document.querySelectorAll('.filter-button');
+        const menuItems = document.querySelectorAll('.sidebar-item');
+
+        const currentTheme = localStorage.getItem('theme');
+        if (currentTheme === 'light') {
+            body.classList.add('light-theme');
+        }
+
+        let sidebarExpanded = true;
+        let isMouseOverSidebar = false;
+        let isMenuOpen = false; // 添加菜单状态变量
+        let lastScrollPosition = 0;
+
+        // Auto-collapse sidebar on desktop
+        window.addEventListener('load', () => {
+            if (window.innerWidth > 768) {
+                setTimeout(() => {
+                    if (!isMouseOverSidebar) {
+                        sidebar.classList.add('collapsed');
+                        sidebarExpanded = false;
+                    }
+                }, 2000);
+            }
+        });
+
+        function checkScreenSize() {
+            if (window.innerWidth <= 768) {
+                sidebar.classList.remove('collapsed');
                 sidebar.classList.remove('visible');
                 overlay.classList.remove('visible');
-            });
-            
-            // Auto-collapse sidebar on desktop
-            window.addEventListener('load', () => {
-                if (window.innerWidth > 768) {
-                    setTimeout(() => {
-                        if (!isMouseOverSidebar) {
-                            sidebar.classList.add('collapsed');
-                        }
-                    }, 2000);
+                sidebarExpanded = false;
+                isMenuOpen = false;
+            } else {
+                sidebar.classList.add('visible');
+                sidebarExpanded = true;
+            }
+        }
+
+        checkScreenSize();
+        window.addEventListener('resize', checkScreenSize);
+
+        // Theme toggle
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('light-theme');
+            const theme = body.classList.contains('light-theme') ? 'light' : 'dark';
+            localStorage.setItem('theme', theme);
+        });
+
+        // Sidebar hover for desktop
+        sidebar.addEventListener('mouseenter', () => {
+            if (window.innerWidth > 768) {
+                sidebar.classList.remove('collapsed');
+                sidebarExpanded = true;
+                isMouseOverSidebar = true;
+            }
+        });
+
+        sidebar.addEventListener('mouseleave', () => {
+            if (window.innerWidth > 768) {
+                sidebar.classList.add('collapsed');
+                sidebarExpanded = false;
+                isMouseOverSidebar = false;
+            }
+        });
+
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('visible');
+            overlay.classList.remove('visible');
+            isMenuOpen = false;
+        });
+
+        // User menu toggle
+        userMenuToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            userMenu.classList.toggle('active');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!userMenu.contains(e.target) && !userMenuToggle.contains(e.target)) {
+                userMenu.classList.remove('active');
+            }
+        });
+
+        // Sidebar and bottom nav interactions
+        menuItems.forEach(item => {
+            item.addEventListener('click', function() {
+                menuItems.forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.remove('visible');
+                    overlay.classList.remove('visible');
+                    isMenuOpen = false;
                 }
             });
-            
-            // Navigation items
-            document.querySelectorAll('.sidebar-item').forEach(item => {
-                item.addEventListener('click', function() {
-                    document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
-                    this.classList.add('active');
-                    if (window.innerWidth <= 768) {
-                        sidebar.classList.remove('visible');
-                        overlay.classList.remove('visible');
-                    }
-                });
-            });
-            
-            document.querySelectorAll('.bottom-nav-item').forEach(item => {
-                item.addEventListener('click', function() {
-                    document.querySelectorAll('.bottom-nav-item').forEach(i => i.classList.remove('active'));
-                    this.classList.add('active');
-                    if (this.dataset.section === 'menu') {
+        });
+
+        bottomNavItems.forEach(item => {
+            item.addEventListener('click', function() {
+                bottomNavItems.forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                
+                if (this.dataset.section === 'menu') {
+                    isMenuOpen = !isMenuOpen; // 切换菜单状态
+                    if (isMenuOpen) {
                         sidebar.classList.add('visible');
                         overlay.classList.add('visible');
-                        bottomNav.classList.remove('hidden');
                     } else {
                         sidebar.classList.remove('visible');
                         overlay.classList.remove('visible');
                     }
-                });
-            });
-            
-            // Filter buttons
-            document.querySelectorAll('.filter-button').forEach(button => {
-                button.addEventListener('click', function() {
-                    document.querySelectorAll('.filter-button').forEach(btn => btn.classList.remove('active'));
-                    this.classList.add('active');
-                });
-            });
-            
-            // Scroll-based hiding for bottom nav on mobile
-            let lastScrollTop = 0;
-            window.addEventListener('scroll', () => {
-                if (window.innerWidth <= 768) {
-                    const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                    bottomNav.classList.toggle('hidden', currentScrollTop > lastScrollTop && currentScrollTop > 50);
-                    lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop;
+                    bottomNav.classList.remove('hidden');
+                } else {
+                    sidebar.classList.remove('visible');
+                    overlay.classList.remove('visible');
+                    isMenuOpen = false;
                 }
             });
         });
+
+        // Filter buttons
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // 改进的滚动逻辑 - 底部导航栏显示/隐藏
+        window.addEventListener('scroll', () => {
+            if (window.innerWidth > 768) return;
+            
+            const currentScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+            
+            // 向下滚动超过50px时隐藏底部导航栏
+            if (currentScrollPosition > lastScrollPosition && currentScrollPosition > 50) {
+                bottomNav.classList.add('hidden');
+            } 
+            // 向上滚动或接近顶部时显示底部导航栏
+            else if (currentScrollPosition < lastScrollPosition || currentScrollPosition < 50) {
+                bottomNav.classList.remove('hidden');
+            }
+            
+            lastScrollPosition = currentScrollPosition <= 0 ? 0 : currentScrollPosition;
+        });
+
+        // 修复侧边栏滚动问题
+        sidebar.addEventListener('touchstart', function(e) {
+            // 如果内容可以滚动，则阻止事件冒泡
+            if (this.scrollHeight > this.clientHeight) {
+                e.stopPropagation();
+            }
+        }, { passive: true });
+
+        sidebar.addEventListener('touchmove', function(e) {
+            // 如果内容可以滚动，则阻止事件冒泡
+            if (this.scrollHeight > this.clientHeight) {
+                e.stopPropagation();
+            }
+        }, { passive: true });
     </script>
 </body>
 </html>
