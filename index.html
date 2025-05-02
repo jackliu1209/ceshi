@@ -332,26 +332,11 @@
             flex-grow: 1;
             padding: 20px;
             margin-left: var(--sidebar-width);
-            transition: margin-left var(--transition-speed) ease, transform var(--transition-speed) ease, width var(--transition-speed) ease;
-            will-change: margin-left, transform, width;
+            transition: margin-left var(--transition-speed) ease, transform var(--transition-speed) ease;
+            will-change: margin-left, transform;
             transform: translateZ(0);
             backface-visibility: hidden;
             perspective: 1000px;
-        }
-
-        .sidebar.collapsed ~ .content {
-            margin-left: var(--sidebar-collapsed-width);
-        }
-
-        /* Folding effect when sidebar is expanded on desktop */
-        @media (min-width: 769px) {
-            .sidebar:not(.collapsed) ~ .content {
-                transform: scale(0.85);
-                transform-origin: left top;
-                width: calc(100% - var(--sidebar-width));
-                margin-left: var(--sidebar-width);
-                opacity: 0.9;
-            }
         }
 
         /* Enhanced text visibility in dark mode with frosted glass effect */
@@ -388,29 +373,25 @@
                 will-change: transform;
             }
             
+            .sidebar:not(.collapsed) ~ .content {
+                transform: translateX(calc(var(--sidebar-width) - var(--sidebar-collapsed-width)));
+            }
+            
             .sidebar:not(.collapsed) ~ .content .content-card {
-                transition: transform 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28), box-shadow 0.4s ease;
-            }
-            
-            .sidebar:not(.collapsed) ~ .content .content-card:nth-child(3n+1) {
-                transform: translateX(10px) translateY(5px);
-                z-index: 3;
-            }
-            
-            .sidebar:not(.collapsed) ~ .content .content-card:nth-child(3n+2) {
-                transform: translateX(5px) translateY(3px);
-                z-index: 2;
-            }
-            
-            .sidebar:not(.collapsed) ~ .content .content-card:nth-child(3n+3) {
-                transform: translateX(0) translateY(0);
-                z-index: 1;
+                transform: scale(0.9);
+                opacity: 0.8;
             }
             
             .sidebar:not(.collapsed) ~ .content .content-card:hover {
-                transform: translateY(-5px) !important;
+                transform: scale(0.95) !important;
+                opacity: 1;
                 z-index: 4 !important;
             }
+        }
+
+        .sidebar.collapsed ~ .content {
+            margin-left: var(--sidebar-collapsed-width);
+            transform: translateX(0);
         }
 
         .content-container {
@@ -528,7 +509,7 @@
             background-color: var(--dark-surface);
             border-radius: 8px;
             overflow: hidden;
-            transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+            transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease, opacity var(--transition-speed) ease;
         }
 
         body.light-theme .content-card {
@@ -669,8 +650,6 @@
                 padding: 16px;
                 padding-top: calc(var(--header-height) + 16px);
                 padding-bottom: 80px;
-                transform: none !important;
-                width: 100% !important;
             }
 
             .slider-container {
@@ -693,27 +672,37 @@
                 padding-bottom: 8px;
             }
 
+            /* 修改为两列布局 */
             .content-grid {
                 grid-template-columns: repeat(2, 1fr);
-                gap: 16px;
+                gap: 12px;
             }
-
+            
             .content-card {
-                min-width: 0;
+                margin-bottom: 0;
             }
-
+            
             .card-image {
-                height: 140px;
+                height: 120px;
             }
         }
 
         @media (max-width: 480px) {
             .content-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
             }
 
             .card-image {
-                height: 200px;
+                height: 100px;
+            }
+            
+            .card-title {
+                font-size: 14px;
+            }
+            
+            .card-meta {
+                font-size: 12px;
             }
         }
 
@@ -813,14 +802,14 @@
         </div>
         
         <div class="sidebar-section">
-            <div class="sidebar-section-title">设置</div>
+            <div class="sidebar-section-title">设置22</div>
             <div class="sidebar-item theme-toggle-item">
                 <div class="sidebar-item-icon">
                     <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
                         <path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"></path>
                     </svg>
                 </div>
-                <div class="sidebar-item-text">设置</div>
+                <div class="sidebar-item-text">设22置</div>
             </div>
             <div class="sidebar-item">
                 <div class="sidebar-item-icon">
@@ -970,7 +959,6 @@
         const slider = document.getElementById('slider');
         const sliderDots = document.querySelectorAll('.slider-dot');
         const settingsToggle = document.querySelector('.theme-toggle-item');
-        const content = document.querySelector('.content');
 
         // Initialize theme and icons
         const currentTheme = localStorage.getItem('theme') || 'dark';
@@ -997,10 +985,15 @@
 
         // Theme toggle function
         function toggleTheme(element) {
+            // 立即切换主题
             body.classList.toggle('light-theme');
             const theme = body.classList.contains('light-theme') ? 'light' : 'dark';
             localStorage.setItem('theme', theme);
+            
+            // 更新图标
             themeToggle.querySelector('img').src = themeIcons[theme];
+            
+            // 如果是头部切换按钮，执行旋转动画
             if (element === themeToggle) {
                 themeToggle.classList.add('rotate');
                 setTimeout(() => {
@@ -1098,7 +1091,6 @@
                     if (!isMouseOverSidebar) {
                         sidebar.classList.add('collapsed');
                         sidebarExpanded = false;
-                        content.classList.remove('content-folded');
                     }
                 }, 2000);
             }
@@ -1113,7 +1105,6 @@
                 overlay.classList.remove('visible');
                 sidebarExpanded = false;
                 isMenuOpen = false;
-                content.classList.remove('content-folded');
             } else {
                 sidebar.classList.add('visible');
                 sidebarExpanded = true;
@@ -1129,7 +1120,6 @@
                 sidebar.classList.remove('collapsed');
                 sidebarExpanded = true;
                 isMouseOverSidebar = true;
-                content.classList.add('content-folded');
             }
         });
 
@@ -1138,7 +1128,6 @@
                 sidebar.classList.add('collapsed');
                 sidebarExpanded = false;
                 isMouseOverSidebar = false;
-                content.classList.remove('content-folded');
             }
         });
 
