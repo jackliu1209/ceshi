@@ -275,7 +275,7 @@
             overflow: hidden;
             transition: all var(--transition-speed) ease;
             position: relative;
-            -webkit-tap-highlight-color: transparent;
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
         }
 
         .sidebar-item:hover {
@@ -346,17 +346,13 @@
 
         @media (min-width: 769px) {
             .content-grid {
-                perspective: 1000px;
-                transform-style: preserve-3d;
+                perspective: none;
+                transform-style: flat;
             }
             
             .content-card {
-                transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
-                position: relative;
-                z-index: 1;
-                transform-style: preserve-3d;
-                backface-visibility: hidden;
-                will-change: transform;
+                transition: none;
+                transform-style: flat;
             }
         }
 
@@ -479,7 +475,6 @@
             background-color: var(--dark-surface);
             border-radius: 8px;
             overflow: hidden;
-            transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease, opacity var(--transition-speed) ease;
         }
 
         body.light-theme .content-card {
@@ -773,7 +768,7 @@
         </div>
         
         <div class="sidebar-section">
-            <div class="sidebar-section-title">设置</div>
+            <div class="sidebar-section-title">222</div>
             <div class="sidebar-item theme-toggle-item" id="sidebarThemeToggle">
                 <div class="sidebar-item-icon">
                     <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
@@ -785,10 +780,10 @@
             <div class="sidebar-item">
                 <div class="sidebar-item-icon">
                     <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"></path>
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.59 11.83l4.58-4.59-1.41-1.41-3.17 3.17-1.41-1.41-1.41 1.41 2.82 2.83z"></path>
                     </svg>
                 </div>
-                <div class="sidebar-item-text">报告问题</div>
+                <div class="sidebar-item-text">联系我</div>
             </div>
         </div>
     </div>
