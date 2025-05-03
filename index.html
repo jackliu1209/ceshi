@@ -217,11 +217,10 @@
             -webkit-overflow-scrolling: touch;
             transform: translateZ(0);
             scrollbar-width: none; /* Firefox */
-            -ms-overflow-style: none; /* IE and Edge */
         }
 
         .sidebar::-webkit-scrollbar {
-            display: none; /* Chrome, Safari and Opera */
+            display: none; /* Chrome, Safari, Opera */
         }
 
         body.light-theme .sidebar {
@@ -276,8 +275,7 @@
             overflow: hidden;
             transition: all var(--transition-speed) ease;
             position: relative;
-            -webkit-user-select: none;
-            user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .sidebar-item:hover {
@@ -320,8 +318,8 @@
             flex-grow: 1;
             padding: 20px;
             margin-left: var(--sidebar-width);
-            transition: margin-left var(--transition-speed) ease, transform var(--transition-speed) ease;
-            will-change: margin-left, transform;
+            transition: margin-left var(--transition-speed) ease;
+            will-change: margin-left;
             transform: translateZ(0);
             backface-visibility: hidden;
             perspective: 1000px;
@@ -353,33 +351,17 @@
             }
             
             .content-card {
-                transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease, filter var(--transition-speed) ease;
+                transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
                 position: relative;
                 z-index: 1;
                 transform-style: preserve-3d;
                 backface-visibility: hidden;
                 will-change: transform;
             }
-            
-            .sidebar:not(.collapsed) ~ .content {
-                transform: translateX(0);
-            }
-            
-            .sidebar:not(.collapsed) ~ .content .content-card {
-                transform: scale(0.98);
-                filter: brightness(0.95);
-            }
-            
-            .sidebar:not(.collapsed) ~ .content .content-card:hover {
-                transform: scale(1.02) !important;
-                filter: brightness(1.05);
-                z-index: 4 !important;
-            }
         }
 
         .sidebar.collapsed ~ .content {
             margin-left: var(--sidebar-collapsed-width);
-            transform: translateX(0);
         }
 
         .content-container {
@@ -627,12 +609,8 @@
                 width: 280px;
                 z-index: 950;
                 overflow-y: auto;
-                scrollbar-width: none;
-                -ms-overflow-style: none;
-            }
-
-            .sidebar::-webkit-scrollbar {
-                display: none;
+                -webkit-overflow-scrolling: touch;
+                overscroll-behavior: contain;
             }
 
             .sidebar.visible {
@@ -735,7 +713,6 @@
             <div class="theme-toggle" id="themeToggle">
                 <img src="https://www.ysjf.com/assets/ysjf_active@2x-BTnDL7hV.png" alt="Theme toggle">
             </div>
-            <img src="hv" alt="Logo" class="logo">
         </div>
         
         <div class="user-controls">
@@ -988,15 +965,17 @@
             themeToggle.querySelector('img').src = themeIcons[theme];
             
             // 执行旋转动画
-            element.classList.add('rotate');
-            setTimeout(() => {
-                element.classList.remove('rotate');
-            }, 500);
+            if (element === themeToggle || element === sidebarThemeToggle) {
+                themeToggle.classList.add('rotate');
+                setTimeout(() => {
+                    themeToggle.classList.remove('rotate');
+                }, 500);
+            }
         }
 
         // Theme toggle handlers
         themeToggle.addEventListener('click', () => toggleTheme(themeToggle));
-        sidebarThemeToggle.addEventListener('click', () => toggleTheme(themeToggle));
+        sidebarThemeToggle.addEventListener('click', () => toggleTheme(sidebarThemeToggle));
 
         // Slider functions
         function initSlider() {
@@ -1095,6 +1074,7 @@
                 overlay.classList.remove('visible');
                 sidebarExpanded = false;
                 isMenuOpen = false;
+                document.body.style.overflow = 'auto';
             } else {
                 sidebar.classList.add('visible');
                 sidebarExpanded = true;
@@ -1125,6 +1105,7 @@
             sidebar.classList.remove('visible');
             overlay.classList.remove('visible');
             isMenuOpen = false;
+            document.body.style.overflow = 'auto';
         });
 
         // Sidebar and bottom nav interactions
@@ -1138,6 +1119,7 @@
                     sidebar.classList.remove('visible');
                     overlay.classList.remove('visible');
                     isMenuOpen = false;
+                    document.body.style.overflow = 'auto';
                 }
             });
         });
@@ -1152,18 +1134,18 @@
                     if (isMenuOpen) {
                         sidebar.classList.add('visible');
                         overlay.classList.add('visible');
-                        document.body.style.overflow = 'hidden'; // 禁止滚动
+                        document.body.style.overflow = 'hidden';
                     } else {
                         sidebar.classList.remove('visible');
                         overlay.classList.remove('visible');
-                        document.body.style.overflow = ''; // 恢复滚动
+                        document.body.style.overflow = 'auto';
                     }
                     bottomNav.classList.remove('hidden');
                 } else {
                     sidebar.classList.remove('visible');
                     overlay.classList.remove('visible');
                     isMenuOpen = false;
-                    document.body.style.overflow = ''; // 恢复滚动
+                    document.body.style.overflow = 'auto';
                 }
             });
         });
@@ -1192,14 +1174,17 @@
         });
 
         // Prevent scrolling when sidebar is open on mobile
-        function preventDefault(e) {
+        function preventScroll(e) {
             if (isMenuOpen) {
                 e.preventDefault();
+                e.stopPropagation();
+                return false;
             }
         }
 
         // Add touch event listeners to prevent scrolling when sidebar is open
-        document.addEventListener('touchmove', preventDefault, { passive: false });
+        document.addEventListener('touchmove', preventScroll, { passive: false });
+        document.addEventListener('wheel', preventScroll, { passive: false });
     </script>
 </body>
 </html>
