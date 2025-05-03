@@ -216,6 +216,12 @@
             will-change: width, transform;
             -webkit-overflow-scrolling: touch;
             transform: translateZ(0);
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE and Edge */
+        }
+
+        .sidebar::-webkit-scrollbar {
+            display: none; /* Chrome, Safari and Opera */
         }
 
         body.light-theme .sidebar {
@@ -270,6 +276,8 @@
             overflow: hidden;
             transition: all var(--transition-speed) ease;
             position: relative;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         .sidebar-item:hover {
@@ -306,26 +314,6 @@
             font-size: 14px;
             white-space: nowrap;
             transition: opacity var(--transition-speed) ease;
-        }
-
-        .sidebar-item::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: transparent;
-            transition: background-color 0.2s ease;
-            pointer-events: none;
-        }
-
-        .sidebar-item:active::after {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        body.light-theme .sidebar-item:active::after {
-            background-color: rgba(0, 0, 0, 0.1);
         }
 
         .content {
@@ -365,7 +353,7 @@
             }
             
             .content-card {
-                transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+                transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease, filter var(--transition-speed) ease;
                 position: relative;
                 z-index: 1;
                 transform-style: preserve-3d;
@@ -374,17 +362,17 @@
             }
             
             .sidebar:not(.collapsed) ~ .content {
-                transform: translateX(calc(var(--sidebar-width) - var(--sidebar-collapsed-width)));
+                transform: translateX(0);
             }
             
             .sidebar:not(.collapsed) ~ .content .content-card {
-                transform: scale(0.9);
-                opacity: 0.8;
+                transform: scale(0.98);
+                filter: brightness(0.95);
             }
             
             .sidebar:not(.collapsed) ~ .content .content-card:hover {
-                transform: scale(0.95) !important;
-                opacity: 1;
+                transform: scale(1.02) !important;
+                filter: brightness(1.05);
                 z-index: 4 !important;
             }
         }
@@ -639,6 +627,12 @@
                 width: 280px;
                 z-index: 950;
                 overflow-y: auto;
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+            }
+
+            .sidebar::-webkit-scrollbar {
+                display: none;
             }
 
             .sidebar.visible {
@@ -802,14 +796,14 @@
         </div>
         
         <div class="sidebar-section">
-            <div class="sidebar-section-title">设置22</div>
-            <div class="sidebar-item theme-toggle-item">
+            <div class="sidebar-section-title">设置</div>
+            <div class="sidebar-item theme-toggle-item" id="sidebarThemeToggle">
                 <div class="sidebar-item-icon">
                     <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
                         <path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"></path>
                     </svg>
                 </div>
-                <div class="sidebar-item-text">设22置</div>
+                <div class="sidebar-item-text">设置</div>
             </div>
             <div class="sidebar-item">
                 <div class="sidebar-item-icon">
@@ -951,6 +945,7 @@
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('overlay');
         const themeToggle = document.getElementById('themeToggle');
+        const sidebarThemeToggle = document.getElementById('sidebarThemeToggle');
         const bottomNav = document.getElementById('bottomNav');
         const bottomNavItems = document.querySelectorAll('.bottom-nav-item');
         const filterButtons = document.querySelectorAll('.filter-button');
@@ -958,7 +953,6 @@
         const sliderContainer = document.getElementById('sliderContainer');
         const slider = document.getElementById('slider');
         const sliderDots = document.querySelectorAll('.slider-dot');
-        const settingsToggle = document.querySelector('.theme-toggle-item');
 
         // Initialize theme and icons
         const currentTheme = localStorage.getItem('theme') || 'dark';
@@ -993,20 +987,16 @@
             // 更新图标
             themeToggle.querySelector('img').src = themeIcons[theme];
             
-            // 如果是头部切换按钮，执行旋转动画
-            if (element === themeToggle) {
-                themeToggle.classList.add('rotate');
-                setTimeout(() => {
-                    themeToggle.classList.remove('rotate');
-                }, 500);
-            }
+            // 执行旋转动画
+            element.classList.add('rotate');
+            setTimeout(() => {
+                element.classList.remove('rotate');
+            }, 500);
         }
 
         // Theme toggle handlers
         themeToggle.addEventListener('click', () => toggleTheme(themeToggle));
-        if (settingsToggle) {
-            settingsToggle.addEventListener('click', () => toggleTheme(settingsToggle));
-        }
+        sidebarThemeToggle.addEventListener('click', () => toggleTheme(themeToggle));
 
         // Slider functions
         function initSlider() {
@@ -1162,15 +1152,18 @@
                     if (isMenuOpen) {
                         sidebar.classList.add('visible');
                         overlay.classList.add('visible');
+                        document.body.style.overflow = 'hidden'; // 禁止滚动
                     } else {
                         sidebar.classList.remove('visible');
                         overlay.classList.remove('visible');
+                        document.body.style.overflow = ''; // 恢复滚动
                     }
                     bottomNav.classList.remove('hidden');
                 } else {
                     sidebar.classList.remove('visible');
                     overlay.classList.remove('visible');
                     isMenuOpen = false;
+                    document.body.style.overflow = ''; // 恢复滚动
                 }
             });
         });
@@ -1198,18 +1191,15 @@
             lastScrollPosition = currentScrollPosition <= 0 ? 0 : currentScrollPosition;
         });
 
-        // Fix sidebar scrolling
-        sidebar.addEventListener('touchstart', function(e) {
-            if (this.scrollHeight > this.clientHeight) {
-                e.stopPropagation();
+        // Prevent scrolling when sidebar is open on mobile
+        function preventDefault(e) {
+            if (isMenuOpen) {
+                e.preventDefault();
             }
-        }, { passive: true });
+        }
 
-        sidebar.addEventListener('touchmove', function(e) {
-            if (this.scrollHeight > this.clientHeight) {
-                e.stopPropagation();
-            }
-        }, { passive: true });
+        // Add touch event listeners to prevent scrolling when sidebar is open
+        document.addEventListener('touchmove', preventDefault, { passive: false });
     </script>
 </body>
 </html>
