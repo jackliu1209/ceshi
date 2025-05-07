@@ -72,7 +72,6 @@
             height: 30px;
         }
 
-        /* 用户控制区域 */
         .user-controls {
             display: flex;
             align-items: center;
@@ -80,7 +79,6 @@
             position: relative;
         }
 
-        /* 主题切换按钮 */
         .theme-toggle {
             padding: 8px;
             cursor: pointer;
@@ -117,7 +115,6 @@
             transform: rotate(360deg);
         }
 
-        /* 用户头像 */
         .user-avatar {
             width: 32px;
             height: 32px;
@@ -337,9 +334,8 @@
         }
 
         .slider-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
+            width: 20px;
+            height: 4px;
             background: rgba(255, 255, 255, 0.5);
             cursor: pointer;
             transition: background-color 0.3s ease;
@@ -506,7 +502,7 @@
             display: block;
         }
 
-        /* 图片模态框样式 */
+        /* 图片模态框样式 - 修改后的样式 */
         .modal {
             display: none;
             position: fixed;
@@ -528,37 +524,68 @@
             opacity: 1;
         }
 
-        .modal-content {
-            max-width: 90%;
-            max-height: 90%;
-            animation: zoomIn 0.3s ease;
+        .modal-content-container {
+            position: relative;
+            max-width: 90vw;
+            max-height: 90vh;
+            margin: 20px;
         }
 
-        @keyframes zoomIn {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
+        .modal-content {
+            max-width: 100%;
+            max-height: calc(90vh - 40px);
+            display: block;
+            animation: zoomIn 0.3s ease;
+            object-fit: contain;
         }
 
         .modal-close {
-            position: fixed;
-            top: 20px;
-            right: 20px;
+            position: absolute;
+            top: -40px;
+            right: -10px;
             color: white;
             font-size: 30px;
             font-weight: bold;
             cursor: pointer;
             z-index: 1101;
+            background: rgba(0, 0, 0, 0.7);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            border: 2px solid white;
         }
 
         .modal-caption {
-            position: fixed;
-            bottom: 20px;
+            position: absolute;
+            bottom: 0;
             left: 0;
             right: 0;
             color: white;
             text-align: center;
             padding: 10px;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.7);
+            font-size: 14px;
+        }
+
+        @media (min-width: 768px) {
+            .modal-content-container {
+                max-width: 80vw;
+            }
+            
+            .modal-content {
+                max-height: calc(80vh - 40px);
+            }
+            
+            .modal-close {
+                top: -50px;
+                right: -20px;
+                width: 50px;
+                height: 50px;
+                font-size: 35px;
+            }
         }
 
         /* 幽灵图标动画 */
@@ -627,6 +654,22 @@
             .card-image {
                 height: 120px;
             }
+
+            .modal-content-container {
+                max-width: 95vw;
+            }
+            
+            .modal-content {
+                max-height: calc(90vh - 40px);
+            }
+            
+            .modal-close {
+                top: -35px;
+                right: -5px;
+                width: 35px;
+                height: 35px;
+                font-size: 25px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -645,6 +688,11 @@
 
             .card-meta {
                 font-size: 12px;
+            }
+            
+            .modal-caption {
+                font-size: 12px;
+                padding: 8px;
             }
         }
 
@@ -670,9 +718,11 @@
     
     <!-- 图片模态框 -->
     <div class="modal" id="imageModal">
-        <span class="modal-close">&times;</span>
-        <img class="modal-content" id="modalImage">
-        <div class="modal-caption" id="modalCaption"></div>
+        <div class="modal-content-container">
+            <span class="modal-close">&times;</span>
+            <img class="modal-content" id="modalImage">
+            <div class="modal-caption" id="modalCaption"></div>
+        </div>
     </div>
     
     <header>
@@ -1112,6 +1162,22 @@
                     const title = this.querySelector('.card-title').textContent;
                     
                     modalImg.src = img.src;
+                    modalImg.onload = function() {
+                        // 根据图片比例调整显示
+                        const imgRatio = this.naturalWidth / this.naturalHeight;
+                        const containerRatio = window.innerWidth / window.innerHeight;
+                        
+                        if (imgRatio > containerRatio) {
+                            // 宽图，限制宽度
+                            this.style.width = '90vw';
+                            this.style.height = 'auto';
+                        } else {
+                            // 高图，限制高度
+                            this.style.width = 'auto';
+                            this.style.height = '90vh';
+                        }
+                    };
+                    
                     modalCaption.textContent = title;
                     modal.classList.add('show');
                     document.body.style.overflow = 'hidden';
@@ -1193,7 +1259,9 @@
         function goToSlide(index) {
             currentSlide = index;
             slider.style.transform = `translateX(-${currentSlide * 100}%)`;
-            sliderDots.forEach((dot, i) => dot.classList.toggle('active', i === currentSlide));
+            sliderDots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === currentSlide);
+            });
         }
 
         function resetSlideInterval() {
