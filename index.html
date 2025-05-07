@@ -528,8 +528,6 @@
             position: relative;
             max-width: 90%;
             max-height: 90%;
-            width: auto;
-            height: auto;
         }
 
         .modal-content {
@@ -545,9 +543,9 @@
         }
 
         .modal-close {
-            position: absolute;
-            top: -40px;
-            right: 0;
+            position: fixed;
+            top: 20px;
+            right: 20px;
             color: white;
             font-size: 30px;
             font-weight: bold;
@@ -647,12 +645,6 @@
                 padding: 6px 12px 6px 24px;
                 max-width: 90%;
             }
-
-            .modal-close {
-                top: -35px;
-                right: -5px;
-                font-size: 28px;
-            }
         }
 
         @media (max-width: 480px) {
@@ -696,8 +688,8 @@
     
     <!-- 图片模态框 -->
     <div class="modal" id="imageModal">
+        <span class="modal-close">&times;</span>
         <div class="modal-content-container">
-            <span class="modal-close">&times;</span>
             <img class="modal-content" id="modalImage">
             <div class="modal-caption" id="modalCaption"></div>
         </div>
