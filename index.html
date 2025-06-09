@@ -1,238 +1,344 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>精品域名 sococ.com 出售 - 品牌投资优选</title>
-    <!-- Include Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <style>
-        body {
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 0;
-            background-color: #f8fafc;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-        .container {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0, 46, 109, 0.1);
-            overflow: hidden;
-            margin: 20px;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-        header {
-            background: #0f2d5a;
-            color: white;
-            padding: 30px 20px;
-            text-align: center;
-        }
-        h1 {
-            font-size: 2.8em;
-            margin: 0 0 10px;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
-        .subtitle {
-            font-size: 1.2em;
-            opacity: 0.9;
-            margin-bottom: 0;
-        }
-        .domain-card {
-            padding: 30px 20px;
-            text-align: center;
-        }
-        .domain-name {
-            font-size: 3.5em;
-            color: #0f2d5a;
-            font-weight: 700;
-            margin: 20px 0;
-            letter-spacing: -1px;
-        }
-        .domain-highlight {
-            display: inline-block;
-            background: #e6f0ff;
-            color: #0f2d5a;
-            padding: 8px 15px;
-            border-radius: 30px;
-            font-weight: 600;
-            margin: 10px 0;
-            font-size: 0.9em;
-        }
-        .domain-price {
-            font-size: 2.2em;
-            color: #e74c3c;
-            margin: 25px 0;
-            font-weight: 700;
-        }
-        .domain-features {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 15px;
-            margin: 20px 0;
-        }
-        .feature {
-            background: #f5f9ff;
-            padding: 15px 25px;
-            border-radius: 8px;
-            font-size: 0.95em;
-            color: #0f2d5a;
-            font-weight: 500;
-        }
-        .contact-section {
-            padding: 30px 20px;
-            text-align: center;
-            background: #f5f9ff;
-        }
-        .contact-title {
-            font-size: 1.8em;
-            color: #0f2d5a;
-            margin-bottom: 20px;
-            font-weight: 600;
-        }
-        .contact-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin: 20px 0;
-            flex-wrap: wrap;
-        }
-        .contact-email, .contact-phone {
-            display: inline-flex;
-            align-items: center;
-            background: #0f2d5a;
-            color: white;
-            padding: 15px 30px;
-            border-radius: 8px;
-            font-size: 1.3em;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        .contact-email:hover, .contact-phone:hover {
-            background: #1a3b6e;
-            transform: translateY(-2px);
-        }
-        .contact-email i, .contact-phone i {
-            margin-right: 8px;
-            font-size: 1.2em;
-        }
-        .contact-label {
-            font-size: 0.9em;
-            margin-right: 8px;
-            opacity: 0.9;
-        }
-        .domain-desc {
-            color: #555;
-            max-width: 600px;
-            margin: 0 auto;
-            line-height: 1.7;
-            font-size: 0.95em;
-        }
-        footer {
-            text-align: center;
-            padding: 20px;
-            color: #7f8c8d;
-            font-size: 0.9em;
-            background: white;
-            font-weight: bold;
-        }
-        .copy-popup {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #0f2d5a;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-size: 0.9em;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-        }
-        .copy-popup.show {
-            opacity: 1;
-        }
-        @media (max-width: 600px) {
-            h1 { font-size: 2em; }
-            .domain-name { font-size: 2.5em; }
-            .domain-price { font-size: 1.8em; }
-            .contact-title { font-size: 1.4em; }
-            .contact-email, .contact-phone { font-size: 1.1em; padding: 12px 25px; }
-            .contact-buttons { flex-direction: column; gap: 10px; }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- 引入 Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- 引入 Font Awesome -->
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <!-- 引入 Google Fonts 的手写风格字体 -->
+  <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap" rel="stylesheet">
+  
+  <title>Sococ Yes!</title>
+  
+  <!-- Tailwind 配置 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#b35d2b',
+            secondary: '#f39b3b',
+            accent: '#f7c84b',
+            background: '#f9eacd',
+          },
+          fontFamily: {
+            handwritten: ['"Indie Flower"', 'cursive'],
+            normal: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  
+  <!-- 自定义工具类 -->
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .text-shadow {
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.15);
+      }
+      .animate-float {
+        animation: float 6s ease-in-out infinite;
+      }
+      .animate-pulse-slow {
+        animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      }
+      .frame-border {
+        box-shadow: 0 0 0 8px rgba(179, 93, 43, 0.1), 0 0 0 16px rgba(179, 93, 43, 0.05);
+      }
+      .menu-item {
+        transition: all 0.3s ease;
+        transform-origin: left center;
+      }
+      .menu-item:hover {
+        transform: scale(1.05) translateX(5px);
+      }
+      .copy-btn {
+        transition: all 0.2s ease;
+      }
+      .copy-btn:active {
+        transform: scale(0.95);
+      }
+      .tech-card {
+        background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+        border: 1px solid rgba(74, 222, 128, 0.2);
+      }
+    }
+    
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0px); }
+    }
+    
+    /* 菜单弹出动画 */
+    @keyframes menuPop {
+      0% { opacity: 0; transform: translateY(20px) scale(0.9); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    
+    .menu-pop {
+      animation: menuPop 0.3s ease-out forwards;
+    }
+    
+    /* 菜单背景遮罩 */
+    .menu-overlay {
+      background-color: rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(5px);
+    }
+    
+    /* 数据点动画 */
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    .data-point {
+      animation: pulse 2s ease-in-out infinite;
+    }
+  </style>
 </head>
-<body>
-    <div class="container">
-        <header>
-            <h1>精品域名出售</h1>
-            <p class="subtitle">优质品牌域名 · 商业价值高 · 投资收藏首选</p>
-        </header>
 
-        <div class="domain-card">
-            <div class="domain-highlight">独家出售</div>
-            <div class="domain-name">sococ.com</div>
-            <div class="domain-price">￥9,000</div>
-            <div class="domain-desc"></div>
-            <div class="domain-features">
-                <div class="feature">5字母短域名</div>
-                <div class="feature">全球通用</div>
-                <div class="feature">品牌价值高</div>
-                <div class="feature">易记易拼写</div>
-                <div class="feature">商业潜力大</div>
-            </div>
+<body class="bg-background min-h-screen flex flex-col items-center justify-center p-4 font-handwritten relative">
+
+  <!-- 头部装饰元素 -->
+  <div class="absolute top-6 left-6 md:left-12 text-primary/70 text-2xl md:text-3xl">
+    <i class="fa fa-leaf transform -rotate-12 animate-float"></i>
+  </div>
+  <div class="absolute top-6 right-6 md:right-12 text-primary/70 text-2xl md:text-3xl">
+    <i class="fa fa-star-o transform rotate-12 animate-float" style="animation-delay: 2s"></i>
+  </div>
+  
+  <!-- 主内容区 -->
+  <div class="max-w-md w-full text-center">
+    <!-- 品牌标志 -->
+    <div class="mb-6">
+      <h1 class="text-[clamp(3rem,10vw,5rem)] font-bold leading-tight text-shadow">
+        <span class="text-primary transition-all duration-300 hover:text-primary/80">S</span>
+        <span class="text-secondary transition-all duration-300 hover:text-secondary/80">o</span>
+        <span class="text-primary transition-all duration-300 hover:text-primary/80">c</span>
+        <span class="text-accent transition-all duration-300 hover:text-accent/80">o</span>
+        <span class="text-primary transition-all duration-300 hover:text-primary/80">c</span>
+      </h1>
+      
+      <!-- 装饰元素 - 集成用户提供的图片 -->
+      <div class="mt-8 flex justify-center">
+        <div class="relative">
+          <!-- 用户提供的图片 -->
+          <img src="http://i0.hdslb.com/bfs/new_dyn/79ef5aafd086d4bcdd46215c036540ec3537124854860095.jpg" 
+               alt="装饰图案" 
+               class="w-64 h-auto rounded-lg frame-border shadow-xl transform hover:scale-[1.02] transition-transform duration-500 animate-float"
+               style="animation-delay: 0.5s">
+               
+          <!-- 装饰性图标叠加 -->
+          <div class="absolute -top-4 -right-4 bg-white p-2 rounded-full shadow-lg">
+            <i class="fa fa-heart text-secondary text-xl"></i>
+          </div>
+          <div class="absolute -bottom-3 -left-3 bg-white p-2 rounded-full shadow-lg">
+            <i class="fa fa-star text-accent text-xl"></i>
+          </div>
         </div>
-
-        <div class="contact-section">
-            <h2 class="contact-title">立即拥有这个优质域名</h2>
-            <p>sococ.com 是打造国际品牌的完美选择，价格可议，欢迎垂询。</p>
-            <div class="contact-buttons">
-                <a href="#" class="contact-email" onclick="copyEmail()">
-                    <i class="fas fa-envelope"></i>
-                    <span class="contact-label"></span>
-                    yaliuz@qq.com
-                </a>
-                <a href="tel:13211234554" class="contact-phone">
-                    <i class="fas fa-phone"></i>
-                    <span class="contact-label"></span>
-                    13211234554
-                </a>
-            </div>
-            <p>我们提供安全的域名交易服务，没有中间商赚差价，确保转让过程顺利无忧。</p>
-        </div>
-
-        <footer>
-            <p>页面由：www.sococ.com 提供</p>
-        </footer>
+      </div>
     </div>
-
-    <div id="copyPopup" class="copy-popup">邮箱已复制: yaliuz@qq.com😊</div>
-
-    <script>
-        function copyEmail() {
-            const email = "yaliuz@qq.com";
-            navigator.clipboard.writeText(email).then(() => {
-                const popup = document.getElementById("copyPopup");
-                popup.classList.add("show");
-                setTimeout(() => {
-                    popup.classList.remove("show");
-                }, 2000);
-            }).catch(err => {
-                console.error("复制失败: ", err);
-            });
-        }
-    </script>
+    
+    <!-- 域名 -->
+    <div class="mt-8 mb-10">
+      <p class="text-[clamp(1.5rem,5vw,2rem)] text-primary font-medium tracking-wider">
+        sococ.com
+      </p>
+      <div class="w-20 h-1 bg-primary/30 mx-auto mt-3 rounded-full"></div>
+    </div>
+    
+    <!-- 互动元素 -->
+    <div class="mt-8">
+      <button id="menuButton" class="px-6 py-3 bg-primary text-white rounded-full shadow-lg hover:bg-primary/90 active:scale-95 transition-all duration-300 transform hover:shadow-xl">
+        <i class="fa fa-heart mr-2"></i> 探索更多
+      </button>
+    </div>
+  </div>
+  
+  <!-- 底部装饰元素 -->
+  <div class="absolute bottom-6 left-6 md:left-12 text-primary/70 text-2xl md:text-3xl">
+    <i class="fa fa-paper-plane-o transform rotate-45 animate-float" style="animation-delay: 1s"></i>
+  </div>
+  <div class="absolute bottom-6 right-6 md:right-12 text-primary/70 text-2xl md:text-3xl">
+    <i class="fa fa-sun-o animate-float" style="animation-delay: 3s"></i>
+  </div>
+  
+  <!-- 菜单弹出层 -->
+  <div id="menuOverlay" class="fixed inset-0 z-50 flex items-center justify-center menu-overlay hidden">
+    <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full mx-4 menu-pop relative" style="background-color: #f9eacd;">
+      <!-- 关闭按钮 -->
+      <button id="closeMenu" class="absolute top-3 right-3 text-primary/70 hover:text-primary">
+        <i class="fa fa-times text-xl"></i>
+      </button>
+      
+      <!-- 菜单标题 -->
+      <div class="text-center mb-6">
+        <h2 class="text-2xl font-bold text-primary">😀</h2>
+        <div class="w-16 h-1 bg-primary/30 mx-auto mt-2 rounded-full"></div>
+      </div>
+      
+      <!-- 菜单项 -->
+      <div class="space-y-4">
+        <div class="menu-item p-4 rounded-xl bg-white shadow-md hover:shadow-lg font-normal">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <div class="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center mr-4">
+                <i class="fa fa-wechat text-secondary"></i>
+              </div>
+              <span class="text-lg text-gray-800">微信</span>
+            </div>
+            <div class="flex items-center">
+              <span class="text-gray-700 mr-2 font-mono">yaliuz</span>
+              <button class="copy-btn bg-secondary/20 text-secondary p-2 rounded-full hover:bg-secondary/30" data-text="yaliuz">
+                <i class="fa fa-copy"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="menu-item p-4 rounded-xl bg-white shadow-md hover:shadow-lg font-normal">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <div class="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center mr-4">
+                <i class="fa fa-envelope text-accent"></i>
+              </div>
+              <span class="text-lg text-gray-800">邮箱</span>
+            </div>
+            <div class="flex items-center">
+              <span class="text-gray-700 mr-2 font-mono">Hi@sococ.com</span>
+              <button class="copy-btn bg-accent/20 text-accent p-2 rounded-full hover:bg-accent/30" data-text="Hi@sococ.com">
+                <i class="fa fa-copy"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="menu-item p-4 rounded-xl bg-white shadow-md hover:shadow-lg font-normal">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center mr-4">
+                <i class="fa fa-globe text-primary"></i>
+              </div>
+              <span class="text-lg text-gray-800">网站</span>
+            </div>
+            <div class="flex items-center">
+              <span class="text-gray-700 mr-2 font-mono">www.sococ.com</span>
+              <button class="copy-btn bg-primary/20 text-primary p-2 rounded-full hover:bg-primary/30" data-text="www.sococ.com">
+                <i class="fa fa-copy"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 替换为科技感数据面板 -->
+        <div class="tech-card p-5 rounded-lg border border-gray-700 hover:border-green-400 transition-all duration-300 group font-normal">
+          <div class="flex items-center space-x-4">
+            <div class="w-12 h-12 rounded-lg bg-gray-700 flex items-center justify-center text-green-400 group-hover:text-white group-hover:bg-green-500 transition-all duration-300">
+              <i class="fa fa-heart text-xl"></i>
+            </div>
+            <div>
+              <h3 class="text-lg font-medium text-gray-100">服务器</h3>
+              <p class="text-sm text-gray-400">实时监测系统状态</p>
+            </div>
+            <div class="ml-auto">
+              <div class="flex space-x-1">
+                <div class="w-2 h-2 rounded-full bg-green-400 data-point" style="animation-delay: 0s"></div>
+                <div class="w-2 h-2 rounded-full bg-green-400 data-point" style="animation-delay: 0.2s"></div>
+                <div class="w-2 h-2 rounded-full bg-green-400 data-point" style="animation-delay: 0.4s"></div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-3 grid grid-cols-3 gap-2 text-center">
+            <div class="bg-gray-700/50 rounded p-1">
+              <div class="text-green-400 font-mono">87%</div>
+              <div class="text-xs text-gray-400">CPU</div>
+            </div>
+            <div class="bg-gray-700/50 rounded p-1">
+              <div class="text-blue-400 font-mono">18%</div>
+              <div class="text-xs text-gray-400">内存</div>
+            </div>
+            <div class="bg-gray-700/50 rounded p-1">
+              <div class="text-purple-400 font-mono">1.2m</div>
+              <div class="text-xs text-gray-400">请求</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 装饰元素 -->
+      <div class="absolute -top-3 -left-3 text-primary/50">
+        <i class="fa fa-star text-xl"></i>
+      </div>
+      <div class="absolute -bottom-3 -right-3 text-accent/50">
+        <i class="fa fa-heart text-xl"></i>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // 菜单控制逻辑
+    const menuButton = document.getElementById('menuButton');
+    const menuOverlay = document.getElementById('menuOverlay');
+    const closeMenu = document.getElementById('closeMenu');
+    
+    menuButton.addEventListener('click', () => {
+      menuOverlay.classList.remove('hidden');
+      document.body.style.overflow = 'hidden'; // 防止背景滚动
+    });
+    
+    closeMenu.addEventListener('click', () => {
+      menuOverlay.classList.add('hidden');
+      document.body.style.overflow = '';
+    });
+    
+    // 点击遮罩层也可以关闭菜单
+    menuOverlay.addEventListener('click', (e) => {
+      if (e.target === menuOverlay) {
+        menuOverlay.classList.add('hidden');
+        document.body.style.overflow = '';
+      }
+    });
+    
+    // 复制功能
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const text = btn.getAttribute('data-text');
+        navigator.clipboard.writeText(text).then(() => {
+          // 临时改变图标表示复制成功
+          const icon = btn.querySelector('i');
+          icon.classList.remove('fa-copy');
+          icon.classList.add('fa-check');
+          btn.classList.add('bg-green-100', 'text-green-500');
+          btn.classList.remove('bg-secondary/20', 'text-secondary', 'bg-accent/20', 'text-accent', 'bg-primary/20', 'text-primary');
+          
+          setTimeout(() => {
+            icon.classList.remove('fa-check');
+            icon.classList.add('fa-copy');
+            btn.classList.remove('bg-green-100', 'text-green-500');
+            // 根据原始按钮类型恢复颜色
+            if (btn.classList.contains('bg-secondary/20')) {
+              btn.classList.add('bg-secondary/20', 'text-secondary');
+            } else if (btn.classList.contains('bg-accent/20')) {
+              btn.classList.add('bg-accent/20', 'text-accent');
+            } else {
+              btn.classList.add('bg-primary/20', 'text-primary');
+            }
+          }, 1500);
+        });
+      });
+    });
+    
+    // 阻止菜单项点击事件冒泡
+    document.querySelectorAll('.menu-item').forEach(item => {
+      item.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
+    });
+  </script>
 </body>
 </html>
